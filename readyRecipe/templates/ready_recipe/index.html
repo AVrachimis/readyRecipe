@@ -27,14 +27,37 @@
     
     <div class="container">
     
-        <h1 class="jumbotron-heading">Welcome to the CookBook!!</h1>
+        <h1 class="jumbotron-heading">Welcome to the world of Recipies!!</h1>
     
     </div>
     
 </div> 
    <div>
         <strong>{{ boldmessage }}</strong><br />
+         
+        {% if recipes %}
+        <br>
+        <strong>Recipes of the Day!!</strong>
+
+ 
+        <ul>
+ 
+            {% for recipy in recipes %}
+ 
+            <li>{{ recipy.name }}</li>
+ 
+            {% endfor %}
+ 
+        </ul>
+ 
+        {% else %}
+ 
+        <strong>There are no Recipies present.</strong>
+ 
+        {% endif %}
+
         <img src="{{ MEDIA_URL }}hello.jpg" alt="Picture of a Cat."/>
+
     </div>
 </body>
 

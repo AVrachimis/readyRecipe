@@ -5,8 +5,10 @@ from ready_recipe.models import Category,Recipe,Ingredient,Comment
 
 class CategoryAdmin(admin.ModelAdmin):
     prepolulated_fields = {'slug':('name')}
+    list_display = ['name']
 
 class RecipeAdmin(admin.ModelAdmin):
+    prepolulated_fields = {'slug':('name')}
     list_display = ['name','instuction','picture','portions','difficulty','completion_time','calories','average_overall_price','category_id','views']
 
 class CommentAdmin(admin.ModelAdmin):

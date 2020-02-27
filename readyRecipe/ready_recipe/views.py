@@ -4,11 +4,15 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
 
-def index(request):
+from ready_recipe.models import Recipe
 
+
+def index(request):
+    
+    recipe_list = Recipe.objects.order_by('-views')[:5]
     context_dict={}
     context_dict['boldmessage'] = 'Hello i have just started working with the project!!'
-    
+    context_dict['recipes'] = recipe_list
     return render(request,'ready_recipe/index.html',context = context_dict)
 
 

@@ -35,6 +35,11 @@ class Recipe(models.Model):
     category_id = models.ForeignKey(Category,on_delete=models.CASCADE,default = 0)
     views = models.IntegerField(default=0)
     #owner_id = models.ForeignKey(User)
+    slug = models.SlugField()
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Recipe, self).save(*args, **kwargs)
 
 
 
