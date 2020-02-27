@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+
+<html></html>
+
+<head>
+
+    <title>The CookBook</title>
+
+
+</head>
+
+<body>
+    <Style>
+    body {
+        background-image:  url(static/images/back.jpg);
+        background-repeat: no-repeat;
+        background-attachment: fixed;  
+        background-size: cover;
+      }
+      </Style>
+
+<div class="jumbotron p-4">
+    
+    <div class="container">
+    
+        <h1 class="jumbotron-heading">Welcome to the CookBook!!</h1>
+    
+    </div>
+    
+</div> 
+   <div>
+        <strong>{{ boldmessage }}</strong><br />
+        <img src="{{ MEDIA_URL }}hello.jpg" alt="Picture of a Cat."/>
+    </div>
+</body>
+
+</html>
