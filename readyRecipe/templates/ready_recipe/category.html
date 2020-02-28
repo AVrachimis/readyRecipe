@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+ <html>
+
+ 
+ <head>
+ 
+    <title>{{category.name}}</title>
+ 
+</head>
+
+
+
+<body>
+
+    <div>
+        {% if category %}
+        <h1>{{ category.name }}</h1>
+        {% if recipes %}
+        <ul>
+            {% for recipe in recipes %}
+            <a href="/ready_recipe/category/{{ category.slug }}/{{recipe.slug}}/">{{ recipe.name }}</a>
+            <br>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <strong>No pages currently in category.</strong>
+        {% endif %}
+        {% else %}
+        The specified category does not exist.
+        {% endif %}
+    </div>
+</body>
+</html>

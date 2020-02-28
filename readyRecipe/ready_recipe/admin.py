@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
 
-from ready_recipe.models import Category,Recipe,Ingredient,Comment
+
+from ready_recipe.models import Category,Recipe,Ingredient,Comment,Quantities,UserProfile
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -9,16 +11,26 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class RecipeAdmin(admin.ModelAdmin):
     prepolulated_fields = {'slug':('name')}
-    list_display = ['name','instuction','picture','portions','difficulty','completion_time','calories','average_overall_price','category_id','views']
+    list_display = ['name','picture','portions','difficulty','category_id','owner_id','views']
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['date','recommentations','recipe_id']
+    list_display = ['date','recommentations','recipe_id','owner_id']
 
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ['name']
 
+class QuantitiesAdmin(admin.ModelAdmin):
+    list_display = ['recipe','ingredient','quantity']
+
+
+#class UserProfileAdmin(admin.ModelAdmin):
+  #  prepolulated_fields = {'slug':('first_name')}
 
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(Recipe,RecipeAdmin)
 admin.site.register(Ingredient,IngredientAdmin)
 admin.site.register(Comment,CommentAdmin)
+admin.site.register(Quantities,QuantitiesAdmin)
+admin.site.register(UserProfile,)
+
+     #UserProfileAdmin)

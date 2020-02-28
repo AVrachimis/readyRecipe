@@ -3,16 +3,19 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
-
-from ready_recipe.models import Recipe
+from ready_recipe.models import Recipe,Category,Quantities
 
 
 def index(request):
-    
+    category_list = Category.objects.order_by('-name')
     recipe_list = Recipe.objects.order_by('-views')[:5]
+
+
     context_dict={}
     context_dict['boldmessage'] = 'Hello i have just started working with the project!!'
     context_dict['recipes'] = recipe_list
+    context_dict['categories'] = category_list
+
     return render(request,'ready_recipe/index.html',context = context_dict)
 
 
@@ -29,10 +32,10 @@ def show_category(request, category_name_slug):
         
         # Retrieve all of the associated pages.
         # The filter() will return a list of page objects or an empty list.
-        pages = Page.objects.filter(category=category)
+        recipes = Recipe.objects.filter(category_id=category)
         
         # Adds our results list to the template context under name pages.
-        context_dict['pages'] = pages
+        context_dict['recipes'] = recipes
         
         # We also add the category object from
         # the database to the context dictionary.
@@ -44,11 +47,52 @@ def show_category(request, category_name_slug):
         # Don't do anything -
         # the template will display the "no category" message for us.
         context_dict['category'] = None
-        context_dict['pages'] = None
+        context_dict['recipes'] = None
 
     # Go render the response and return it to the client.
     return render(request, 'ready_recipe/category.html', context=context_dict)
+
+
+def show_recipe(request, category_name_slug, recipe_name_slug):
+    #Create a context dictionary which we can pass to the template rendering engine
+    context_dict={}
+
+    try: 
+        # we can find a category name slug with the given name?
+        #if we can't, the .get() method raises a DoesNotExist exception
+        recipe = Recipe.objects.get(slug = recipe_name_slug)
+        theRecipe = recipe.id
+        quantity = Quantities.objects.filter(recipe = theRecipe)
+
+        # Retrieve all of the associated pages.
+        # The filter() will return a list of page objects or an empty list.
+        
+        #recipes = Recipe.objects.filter(category_id=category)
+        
+        # Adds our results list to the template context under name pages.
+        context_dict['recipes'] = recipe
+        context_dict['quantities'] = quantity
+        
+        # We also add the category object from
+        # the database to the context dictionary.
+        # We'll use this in the template to verify that the category exists.
+        
+        #context_dict['category'] = category
     
+    except Recipe.DoesNotExist:
+        # We get here if we didn't find the specified category.
+        # Don't do anything -
+        # the template will display the "no category" message for us.
+        #context_dict['category'] = None
+        context_dict['recipes'] = None
+        context_dict['quantities'] = None
+
+    # Go render the response and return it to the client.
+    return render(request, 'ready_recipe/recipe.html', context=context_dict)
+
+
+
+
 
 
 

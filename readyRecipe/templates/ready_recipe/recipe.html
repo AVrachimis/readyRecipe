@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+ <html>
+
+ 
+ <head>
+ 
+    <title>{{recipes.name}}</title>
+ 
+</head>
+
+
+
+<body>
+
+    <div>
+        <img src="{{ recipes.picture.url }}"> <br>
+        <strong>Recipe Name: {{recipes.name}}</strong>  <br>
+        <strong>Portions: {{recipes.portions}}</strong> <br>
+
+        <strong>Instructions: {{recipes.instuction}}</strong> <br>
+
+        <strong>Ingredients: </strong> <br>
+
+        {% for quantity in quantities %}
+
+            <Strong> {{quantity.ingredient}}  {{quantity.quantity}} </Strong> <br>
+
+        {% endfor %}
+
+    </div>
+</body>
+</html>
