@@ -41,7 +41,7 @@ class Ingredient(models.Model):
 
 
 DIFFICULTY = ( ('1','1'),('2','2' ),('3','3'),('4','4'),('5','5'),('6','6'),('7','7'),('8','8'),('9','9'),('10','10') )
-PORTIONS = ( ('1','1'),('2','2' ),('3','3'),('4','4'),('5','5'),('6','6'),('7','7'),('8','8'),('9','9'),('10','10'),('11','More than 10') )
+PORTIONS = ( ('1','1'),('2','2' ),('3','3'),('4','4'),('5','5'),('6','More than 5') )
 TIME_NEEDED = ( ('1','1-15 minutes'),('2','15-30 minutes' ),('3','30-60 minutes'),('4','1-1.30 hours'),('5','1.30-2 hours'),('6','2-2.30 hours'),('7','More than 2.30 hours'),)
 class Recipe(models.Model):
     name = models.CharField(max_length=300,unique=True)
@@ -79,7 +79,7 @@ class Quantities(models.Model):
 
 
 class Comment(models.Model):
-    date = models.DateField()
+    date = models.DateField(auto_now_add=True, blank = True)
     recommentations = models.TextField(max_length=3000)
     owner_id = models.ForeignKey(User,on_delete=models.CASCADE)
     recipe_id = models.ForeignKey(Recipe, on_delete=models.CASCADE)

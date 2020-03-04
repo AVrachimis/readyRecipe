@@ -8,7 +8,7 @@
 
 <head>
 
-    <title>The CookBook</title>
+    <title>ReadyRecipe</title>
 
 
 </head>
@@ -33,7 +33,9 @@
     
 </div> 
    <div>
-        <strong>{{ boldmessage }}</strong><br />
+
+    <a href="/ready_recipe/add_recipe/">Add a New Recipe</a><br />
+
          
         {% if recipes %}
         <br>
@@ -65,7 +67,7 @@
             {% for category in categories %}
             <li>
 
-                <a href="/ready_recipe/category/{{ category.slug }}/">{{ category.name }}</a>
+                <a href="/ready_recipe/category/{{ category.slug }}/" style="color: black;">{{ category.name }}</a>
                 
 
             </li>

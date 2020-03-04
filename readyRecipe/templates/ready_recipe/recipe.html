@@ -14,20 +14,93 @@
 <body>
 
     <div>
-        <img src="{{ recipes.picture.url }}"> <br>
-        <strong>Recipe Name: {{recipes.name}}</strong>  <br>
-        <strong>Portions: {{recipes.portions}}</strong> <br>
+        {% if recipes %}
+        <div class="jumbotron p-4">
+    
+			<div class="container">
+			
+				<h1 class="jumbotron-heading">{{recipes.name}}</h1>
+			
+			</div>
+			
+		</div>
+            <img src="{{ recipes.picture.url }}"> <br>
 
-        <strong>Instructions: {{recipes.instuction}}</strong> <br>
+            <h3>Portions</h3> 
+            <strong>{{recipes.portions}}</strong> <br>
+            
+            <h3>Instructions</h3> 
+            <strong>{{recipes.instuction}}</strong> <br>
 
-        <strong>Ingredients: </strong> <br>
+            <h3>Ingredients</h3> 
+            {% if quantities %}
 
-        {% for quantity in quantities %}
+                {% for quantity in quantities %}
 
-            <Strong> {{quantity.ingredient}}  {{quantity.quantity}} </Strong> <br>
+                    <Strong> {{quantity.ingredient}}  {{quantity.quantity}} </Strong> <br>
+
+                {% endfor %}
+            {%else%}
+
+            <strong>No quantity information for {{recipes.name}}</strong>
+
+            {% endif %}
+            <br>
+            {% if comments %}
+            <h3>Comments</h3> 
+
+                {% for comment in comments %}
+                <br>
+                <strong> {{comment.date}}, {{comment.owner_id}} </strong> <br>
+                <strong> {{comment.recommentations}} </strong>
+                <br>
+                
+                {% endfor %}
+            {% endif %}
+
+        {% else %}
+
+        <strong>Recipe not available</strong>
+
+
+        {% endif %}
+
+
+    </div>
+    
+    <div>
+
+    <form id="comment_form" method="post" action = ''>
+
+        {% csrf_token %}
+
+        {% for hidden in form.hidden_fields %}
+
+        {{ hidden }}
 
         {% endfor %}
 
-    </div>
+        
+        {% for field in form.visible_fields %}
+
+            {{ field.errors }}
+
+            {{ field.help_text }}
+            
+            <br>
+
+
+            {{ field }} 
+
+            <br>
+
+        {% endfor %}
+        
+        <br>
+        <input type="submit" name="submit" value="Add Comment" />
+    </form>
+</div>
+
+
 </body>
 </html>

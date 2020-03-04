@@ -3,7 +3,12 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
-from ready_recipe.models import Recipe,Category,Quantities
+from ready_recipe.models import Recipe,Category,Quantities,Comment
+from ready_recipe.forms import RecipeForm,CommentForm
+from django.contrib.auth.models import User
+
+
+from django.shortcuts import redirect
 
 
 def index(request):
@@ -12,7 +17,6 @@ def index(request):
 
 
     context_dict={}
-    context_dict['boldmessage'] = 'Hello i have just started working with the project!!'
     context_dict['recipes'] = recipe_list
     context_dict['categories'] = category_list
 
@@ -61,9 +65,12 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
         # we can find a category name slug with the given name?
         #if we can't, the .get() method raises a DoesNotExist exception
         recipe = Recipe.objects.get(slug = recipe_name_slug)
-        theRecipe = recipe.id
-        quantity = Quantities.objects.filter(recipe = theRecipe)
 
+        quantity = Quantities.objects.filter(recipe = recipe.id)
+
+        comment = Comment.objects.filter(recipe_id = recipe.id )
+
+        current_user = User.objects.get(id = request.user.id)
         # Retrieve all of the associated pages.
         # The filter() will return a list of page objects or an empty list.
         
@@ -72,13 +79,26 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
         # Adds our results list to the template context under name pages.
         context_dict['recipes'] = recipe
         context_dict['quantities'] = quantity
-        
-        # We also add the category object from
-        # the database to the context dictionary.
-        # We'll use this in the template to verify that the category exists.
-        
-        #context_dict['category'] = category
-    
+        context_dict['comments'] = comment
+        context_dict['Owner'] = current_user
+
+
+
+        form = CommentForm()
+        context_dict['form'] = form
+
+        if request.method =='POST':
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit = False)
+                comment.recipe_id = recipe
+                comment.owner_id = current_user
+                comment.save()
+                redirect_url = '/ready_recipe/category/'+category_name_slug+'/'+recipe_name_slug+'/'
+                return redirect(redirect_url)
+            else:
+                print(form.errors)
+
     except Recipe.DoesNotExist:
         # We get here if we didn't find the specified category.
         # Don't do anything -
@@ -86,35 +106,33 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
         #context_dict['category'] = None
         context_dict['recipes'] = None
         context_dict['quantities'] = None
+        context_dict['comments'] = None
+        context_dict['form'] = None
 
     # Go render the response and return it to the client.
     return render(request, 'ready_recipe/recipe.html', context=context_dict)
 
 
-
-
-
-
-
 @login_required
-def add_category(request):
-    form = CategoryForm()
-
+def add_recipe(request):
+    form = RecipeForm()
     if request.method == 'POST':
-        form = CategoryForm(request.POST)
+        form = RecipeForm(request.POST)
 
         if form.is_valid():
-            form.save(commit = True)
-            return redirect('/rango/')
+            recipe = form.save(commit = False)
+            recipe.views = 0
+            recipe.owner_id = request.user
+            #recipe.date = datetime.date.today()
+            recipe.save()
+            return redirect('/ready_recipe/')
         else:
             print(form.errors)
-
-    return render(request,'ready_recipe/add_category.html',{'form':form})
-
+    return render(request,'ready_recipe/add_recipe.html',{'form':form})
 
 
 
-    
+
 @login_required
 def add_page(request, category_name_slug):
     try:

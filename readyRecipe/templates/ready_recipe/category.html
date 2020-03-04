@@ -14,20 +14,33 @@
 <body>
 
     <div>
+        
         {% if category %}
-        <h1>{{ category.name }}</h1>
-        {% if recipes %}
-        <ul>
-            {% for recipe in recipes %}
-            <a href="/ready_recipe/category/{{ category.slug }}/{{recipe.slug}}/">{{ recipe.name }}</a>
-            <br>
-            {% endfor %}
-        </ul>
+        
+            <h1>{{ category.name }}</h1>
+        
+            {% if recipes %}
+        
+            <ul>
+        
+                {% for recipe in recipes %}
+        
+                    <a href="/ready_recipe/category/{{ category.slug }}/{{recipe.slug}}/" style = "color: black;">{{ recipe.name }}</a>  <br>
+        
+                {% endfor %}
+        
+            </ul>
+        
+            {% else %}
+        
+                <strong>No recipes currently in this category.</strong>
+        
+            {% endif %}
+        
         {% else %}
-        <strong>No pages currently in category.</strong>
-        {% endif %}
-        {% else %}
-        The specified category does not exist.
+        
+            The specified category does not exist.
+        
         {% endif %}
     </div>
 </body>
