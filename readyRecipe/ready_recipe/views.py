@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
-from ready_recipe.models import Recipe,Category,Quantities,Comment
+from ready_recipe.models import Recipe,Category,Comment
 from ready_recipe.forms import RecipeForm,CommentForm
 from django.contrib.auth.models import User
 
@@ -21,8 +21,6 @@ def index(request):
     context_dict['categories'] = category_list
 
     return render(request,'ready_recipe/index.html',context = context_dict)
-
-
 
 
 def show_category(request, category_name_slug):
@@ -57,6 +55,7 @@ def show_category(request, category_name_slug):
     return render(request, 'ready_recipe/category.html', context=context_dict)
 
 
+
 def show_recipe(request, category_name_slug, recipe_name_slug):
     #Create a context dictionary which we can pass to the template rendering engine
     context_dict={}
@@ -66,7 +65,6 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
         #if we can't, the .get() method raises a DoesNotExist exception
         recipe = Recipe.objects.get(slug = recipe_name_slug)
 
-        quantity = Quantities.objects.filter(recipe = recipe.id)
 
         comment = Comment.objects.filter(recipe_id = recipe.id )
 
@@ -78,7 +76,6 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
         
         # Adds our results list to the template context under name pages.
         context_dict['recipes'] = recipe
-        context_dict['quantities'] = quantity
         context_dict['comments'] = comment
         context_dict['Owner'] = current_user
 
@@ -105,7 +102,6 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
         # the template will display the "no category" message for us.
         #context_dict['category'] = None
         context_dict['recipes'] = None
-        context_dict['quantities'] = None
         context_dict['comments'] = None
         context_dict['form'] = None
 
@@ -115,48 +111,20 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
 
 @login_required
 def add_recipe(request):
-    form = RecipeForm()
-    if request.method == 'POST':
-        form = RecipeForm(request.POST)
+    current_user = User.objects.get(id = request.user.id)
 
+    if request.method == 'POST':
+        form = RecipeForm(request.POST, request.FILES)
         if form.is_valid():
             recipe = form.save(commit = False)
             recipe.views = 0
-            recipe.owner_id = request.user
-            #recipe.date = datetime.date.today()
+            recipe.owner_id = current_user
             recipe.save()
-            return redirect('/ready_recipe/')
+            return redirect('/ready_recipe/index/')
         else:
             print(form.errors)
+    else:
+        form = RecipeForm()
     return render(request,'ready_recipe/add_recipe.html',{'form':form})
 
 
-
-
-@login_required
-def add_page(request, category_name_slug):
-    try:
-        category = Category.objects.get(slug=category_name_slug)
-    except Category.DoesNotExist:
-        category = None
-
-        
-    if category is None:
-        return redirect('/rango/')
-    
-    form = PageForm()
-    
-    if request.method == 'POST':
-        form = PageForm(request.POST)
-        
-        if form.is_valid():
-            if category:
-                page = form.save(commit=False)
-                page.category = category
-                page.views = 0
-                page.save()
-                return redirect(reverse('rango:show_category', kwargs={'category_name_slug': category_name_slug}))
-        else:
-            print(form.errors)
-    context_dict = {'form': form, 'category': category}
-    return render(request, 'ready_recipe/add_page.html', context=context_dict)

@@ -1,17 +1,15 @@
-<!DOCTYPE html>
 
- <html>
 
+{% extends 'ready_recipe/base.html' %}
  
- <head>
  
-    <title>{{recipes.name}}</title>
- 
-</head>
+    {% block title_block %}
+        {{recipes.name}} 
+    {% endblock %} 
 
 
 
-<body>
+    {% block body_block %}
 
     <div>
         {% if recipes %}
@@ -23,29 +21,32 @@
 			
 			</div>
 			
-		</div>
+        </div>
+        {% if recipes.picture%}
             <img src="{{ recipes.picture.url }}"> <br>
-
+        {%endif%}
             <h3>Portions</h3> 
             <strong>{{recipes.portions}}</strong> <br>
+
+            <h3>Difficulty</h3> 
+            <strong>{{recipes.difficulty}}</strong> <br>
+            
+            <h3>Time Needed</h3> 
+            <strong>{{recipes.completion_time}}</strong> <br>
+            
+            <h3>Calories Per Portion</h3> 
+            <strong>{{recipes.calories}}</strong> <br>
+            
+            <h3>Average Price</h3> 
+            <strong>£{{recipes.average_overall_price}}</strong> <br>
+            
             
             <h3>Instructions</h3> 
             <strong>{{recipes.instuction}}</strong> <br>
 
             <h3>Ingredients</h3> 
-            {% if quantities %}
+            <strong>{{recipes.ingredients}}</strong> <br>
 
-                {% for quantity in quantities %}
-
-                    <Strong> {{quantity.ingredient}}  {{quantity.quantity}} </Strong> <br>
-
-                {% endfor %}
-            {%else%}
-
-            <strong>No quantity information for {{recipes.name}}</strong>
-
-            {% endif %}
-            <br>
             {% if comments %}
             <h3>Comments</h3> 
 
@@ -56,6 +57,9 @@
                 <br>
                 
                 {% endfor %}
+            {% else %}
+                <h3>No Comments for this Recipe</h3>
+
             {% endif %}
 
         {% else %}
@@ -101,6 +105,4 @@
     </form>
 </div>
 
-
-</body>
-</html>
+{% endblock %}

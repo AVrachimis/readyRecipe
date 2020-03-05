@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<html>
+<head>
+   <title>
+       ReadyRecipe -
+       {% block title_block %}
+
+       {% endblock %} 
+   </title>
+</head>
+
+<body>
+   <div>
+
+       {% block body_block %}
+
+       {% endblock %}
+
+   </div>
+   
+   <div>
+
+   </div>
+   <hr />
+   <div>
+       <ul>
+
+           {% if user.is_authenticated %}
+           
+               <li><a href="{% url 'auth_logout' %}?next={% url 'ready_recipe:index'%}">Logout</a></li>
+               
+               <li><a href="{% url 'auth_password_change' %}">Change Password</a></li>
+
+
+
+
+           {% else %}
+
+               <li><a href="{% url 'registration_register' %}">Sign Up</a></li>
+
+               <li><a href="{% url 'auth_login' %}">Login</a></li>
+           {% endif %}
+
+
+           <li><a href="/ready_recipe/index/">Index</a></li>
+
+       </ul>
+   </div>
+</body>
+</html>
+
+

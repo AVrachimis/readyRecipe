@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 
 
-from ready_recipe.models import Category,Recipe,Ingredient,Comment,Quantities,UserProfile
+from ready_recipe.models import Category,Recipe,Comment,UserProfile
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -16,11 +16,6 @@ class RecipeAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['date','recommentations','recipe_id','owner_id']
 
-class IngredientAdmin(admin.ModelAdmin):
-    list_display = ['name']
-
-class QuantitiesAdmin(admin.ModelAdmin):
-    list_display = ['recipe','ingredient','quantity']
 
 
 #class UserProfileAdmin(admin.ModelAdmin):
@@ -28,9 +23,7 @@ class QuantitiesAdmin(admin.ModelAdmin):
 
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(Recipe,RecipeAdmin)
-admin.site.register(Ingredient,IngredientAdmin)
 admin.site.register(Comment,CommentAdmin)
-admin.site.register(Quantities,QuantitiesAdmin)
 admin.site.register(UserProfile,)
 
      #UserProfileAdmin)

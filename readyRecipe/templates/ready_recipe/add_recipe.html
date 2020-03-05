@@ -1,21 +1,24 @@
 
-<!DOCTYPE html>
 
-<html>
 
-<head>
 
-    <title>Upload Your Recipe</title>
 
-</head>
 
-<body>
+    {% block title_block %}
 
-    <h1>Upload you own Recipe</h1>
+        Upload Your Recipe
+        
+    {% endblock %} 
 
-    <div>
 
-        <form id="recipe_form" method="post" action="/ready_recipe/add_recipe/">
+
+    {% block body_block %}
+
+
+
+    
+
+        <form id="recipe_form" method="post" enctype= "multipart/form-data">
 
             {% csrf_token %}
 
@@ -41,8 +44,6 @@
 
             <input type="submit" name="submit" value="Upload Recipe" />
         </form>
-    </div>
+    
+    {% endblock %}
 
- 
-    </body>
-</html>

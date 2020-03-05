@@ -21,42 +21,23 @@ class Category(models.Model):
         return self.name
 
 
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
-    slug = models.SlugField(unique=True)
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(UserProfile, self).save(*args, **kwargs)
-
-
-
-
-class Ingredient(models.Model):
-    name = models.CharField(max_length=100,null=True)
-
-    def __str__(self):
-        return self.name
-
-
 DIFFICULTY = ( ('1','1'),('2','2' ),('3','3'),('4','4'),('5','5'),('6','6'),('7','7'),('8','8'),('9','9'),('10','10') )
 PORTIONS = ( ('1','1'),('2','2' ),('3','3'),('4','4'),('5','5'),('6','More than 5') )
 TIME_NEEDED = ( ('1','1-15 minutes'),('2','15-30 minutes' ),('3','30-60 minutes'),('4','1-1.30 hours'),('5','1.30-2 hours'),('6','2-2.30 hours'),('7','More than 2.30 hours'),)
 class Recipe(models.Model):
     name = models.CharField(max_length=300,unique=True)
     instuction = models.TextField(max_length=2000)
-    picture = models.ImageField()
+    picture = models.ImageField(upload_to='media/',max_length = 255, null = True,blank = True)
     portions = models.CharField(max_length=30,choices=PORTIONS)
     difficulty = models.CharField(max_length=2,choices=DIFFICULTY)
     completion_time = models.CharField(max_length=30,choices = TIME_NEEDED)
     calories = models.IntegerField(default=0)
     average_overall_price = models.FloatField(default=0)
     category_id = models.ForeignKey(Category,on_delete=models.CASCADE,default = 0)
-    views = models.IntegerField(default=0)
+    views = models.IntegerField(blank = True,null = True,default=0)
     owner_id = models.ForeignKey(User,on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
-    ingredient = models.ManyToManyField(Ingredient,through='Quantities')
+    ingredients = models.TextField(max_length=2000,default = '0')
     
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -68,12 +49,14 @@ class Recipe(models.Model):
         return self.name
 
 
-class Quantities(models.Model):
-    recipe = models.ForeignKey(Recipe,on_delete=models.CASCADE)
-    ingredient = models.ForeignKey(Ingredient,on_delete=models.CASCADE)
-    quantity = models.CharField(max_length=100,default=0,null=True)
-    class Meta:
-        verbose_name_plural = 'Quantities'
+class UserProfile(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    slug = models.SlugField(unique=True)
+    saved_Recipes = models.ManyToManyField(Recipe)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(UserProfile, self).save(*args, **kwargs)
 
 
 
