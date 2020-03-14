@@ -3,12 +3,14 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
-from ready_recipe.models import Recipe,Category,Comment
-from ready_recipe.forms import RecipeForm,CommentForm
+from ready_recipe.models import Recipe,Category,Comment,UserProfile
+from ready_recipe.forms import RecipeForm,CommentForm,UserForm,UserProfileForm
 from django.contrib.auth.models import User
-
-
+from django.urls import reverse
 from django.shortcuts import redirect
+
+
+
 
 
 def index(request):
@@ -67,22 +69,24 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
 
 
         comment = Comment.objects.filter(recipe_id = recipe.id )
-
-        current_user = User.objects.get(id = request.user.id)
-        # Retrieve all of the associated pages.
-        # The filter() will return a list of page objects or an empty list.
-        
-        #recipes = Recipe.objects.filter(category_id=category)
-        
-        # Adds our results list to the template context under name pages.
+           
         context_dict['recipes'] = recipe
         context_dict['comments'] = comment
-        context_dict['Owner'] = current_user
+
+        #current_user = User.objects.get(id = request.user.id)
+        if request.user.is_authenticated:
+            current_user = request.user
+
+            UserProfile.add_favourite_recipe(current_user,recipe)
 
 
 
-        form = CommentForm()
-        context_dict['form'] = form
+            context_dict['Owner'] = current_user
+            form = CommentForm()
+            context_dict['form'] = form
+        else:
+            context_dict['Owner'] = None
+            context_dict['form'] = None
 
         if request.method =='POST':
             form = CommentForm(request.POST)
@@ -109,6 +113,79 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
     return render(request, 'ready_recipe/recipe.html', context=context_dict)
 
 
+
+def register(request):
+    registered = False
+    context_dict = {}
+    if request.method == 'POST':
+        #user_form = UserForm(request.POST)
+        #profile_form = UserProfileForm()
+        #context_dict['user_form'] = user_form
+        #context_dict['profile_form'] = profile_form
+        #context_dict["registered"] = registered
+        #return render(request, 'ready_recipe/register.html', context=context_dict)
+
+        user_form = UserForm(request.POST)
+        profile_form = UserProfileForm(request.POST)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            registered = True
+            new_user = authenticate(username=user_form.cleaned_data['username'],
+                                    password = user_form.cleaned_data['password'])
+            login(request,new_user)
+
+
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
+    context_dict["user_form"] = user_form
+    context_dict["profile_form"] = profile_form
+    context_dict["registered"] = registered
+    return render(request, 'ready_recipe/register.html', context_dict)
+
+
+
+def user_login(request):
+    context_dict = {}
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+
+                login(request, user)
+                return redirect(reverse('ready_recipe:index'))
+            else:
+                return HttpResponse("Your account is disabled.")
+                
+        else:
+            context_dict['success'] = False
+            print(f"Invalid login details: {username}, {password}")
+            return HttpResponse("Invalid login details supplied.")
+            #return render(request, 'ready_recipe/login.html', context_dict)
+
+    else:
+        context_dict['success'] = True
+        return render(request, 'ready_recipe/login.html', context_dict)
+
+
+
+@login_required
+def user_logout(request):
+    #Since we know the user is logged in, we can now just log out
+    logout(request)
+    #take the user back to the homepage
+    return redirect(reverse('ready_recipe:index'))
+
+
 @login_required
 def add_recipe(request):
     current_user = User.objects.get(id = request.user.id)
@@ -126,5 +203,45 @@ def add_recipe(request):
     else:
         form = RecipeForm()
     return render(request,'ready_recipe/add_recipe.html',{'form':form})
+
+
+
+@login_required
+def user_profile(request):
+    context_dict={}
+    
+    
+    if request.user.is_authenticated:
+
+        current_user, created = UserProfile.objects.get_or_create(user = request.user)
+
+        my_recipes = Recipe.objects.filter(owner_id = request.user.id)
+
+        # recipes saved by the current user
+        fav_recipes = current_user.saved_Recipes.all()
+
+    #for recipe in saved_recipes.all():
+        #categoryId = str(recipe.category_id)
+        #recipa = Recipe.objects.get(id = recipe.id).category_id
+        #category = Category.objects.get(id = recipa)
+       # category = str(Category.objects.get(id = categoryId))
+        #recipe_category.append(category_id)
+     #   recipe_category[recipe.name]=recipe.category_id
+
+        context_dict['user'] = current_user
+        context_dict['my_recipes'] = my_recipes
+        context_dict['saved_recipes'] = fav_recipes
+
+
+    return render(request,'ready_recipe/user_profile.html',context=context_dict)
+
+
+  # recipe = Recipe.objects.get(slug = recipe_name_slug)
+
+
+     #   comment = Comment.objects.filter(recipe_id = recipe.id )
+
+
+
 
 

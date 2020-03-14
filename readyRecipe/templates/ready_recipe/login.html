@@ -1,0 +1,34 @@
+{% extends 'ready_recipe/base.html' %}
+
+
+{% block title_block %}
+    Login
+{% endblock %} 
+
+
+{% block body_block %}
+
+{% if not success %}
+<strong>Invalid Login details. Please try again</strong>
+
+{% endif %}
+
+<h3>Login</h3>
+
+<form id="login_form" method="post" action="{% url 'ready_recipe:login' %}">
+ {% csrf_token %}
+    Username: <input type="text" name="username" value="" size="50" />
+    <br />
+    Password: <input type="password" name="password" value="" size="50" />
+    <br />
+    <input type="submit" value="submit" />
+    </form>
+   
+   
+{% endblock %}
+
+
+
+
+
+

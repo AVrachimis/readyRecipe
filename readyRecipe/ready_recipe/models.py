@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+from django.core.validators import MinLengthValidator
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -33,11 +34,12 @@ class Recipe(models.Model):
     completion_time = models.CharField(max_length=30,choices = TIME_NEEDED)
     calories = models.IntegerField(default=0)
     average_overall_price = models.FloatField(default=0)
-    category_id = models.ForeignKey(Category,on_delete=models.CASCADE,default = 0)
+    category_id = models.ForeignKey(Category,on_delete=models.CASCADE)
     views = models.IntegerField(blank = True,null = True,default=0)
     owner_id = models.ForeignKey(User,on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     ingredients = models.TextField(max_length=2000,default = '0')
+
     
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -51,14 +53,24 @@ class Recipe(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
-    slug = models.SlugField(unique=True)
     saved_Recipes = models.ManyToManyField(Recipe)
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(UserProfile, self).save(*args, **kwargs)
+
+    @classmethod
+    def add_favourite_recipe(cls, current_user, fav_recipe):
+        saved_recipe, created = cls.object.get_or_create(current_user = user)
+        saved_recipe.saved_Recipes.add(fav_recipe)
+
+    @classmethod
+    def remove_favourite_recipe(cls, current_user, fav_recipe):
+        saved_recipe, created = cls.object.get_or_create(current_user = user)
+        saved_recipe.saved_Recipes.remove(fav_recipe)
+
+        
+ 
 
 
+ 
 
 
 class Comment(models.Model):

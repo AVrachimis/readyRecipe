@@ -1,0 +1,84 @@
+
+{% extends 'ready_recipe/base.html' %}
+
+
+    {% block title_block %}
+
+        {{current_user.username}}
+
+    {% endblock %} 
+
+
+
+
+    {% block body_block %}
+
+    <div> 
+    {% if user %}
+        <div class="jumbotron p-4">
+        <div class="container">
+
+            <h1 class="jumbotron-heading">{{request.user.username}}</h1>
+                
+        </div>
+    
+        <style> 
+            img {
+            max-width: 40%;
+            height: auto;
+          }
+          * {
+            box-sizing: border-box;
+            }
+
+            /* Create two equal columns that floats next to each other */
+            .column {
+                float: left;
+                width: 50%;
+                padding: 10px;
+            }
+
+            /* Clear floats after the columns */
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+        </style>
+        
+        <div class="row">
+            
+            <div class="column">
+                <h2> My own Recipes</h2>
+
+                <ol>
+                    {% for recipe in my_recipes %}
+                        <li>  {{ recipe.name }} </li> 
+                        <img src="{{ recipe.picture.url }}">> <br><br>
+                    {% endfor %}
+                </ol>
+            </div>
+            
+            <div class="column">
+
+                <h3> My saved Recipes</h3>
+
+                <ol>
+                    {% for rec in saved_recipes %}
+                        <li>  {{ rec.name }} </li> 
+                        <img src="{{ rec.picture.url }}">> <br> <br>
+
+                    {% endfor %}
+
+                </ol>
+
+            </div>
+
+
+
+        </div>
+        {% endif %}
+    </div>
+
+    {% endblock %} 
+

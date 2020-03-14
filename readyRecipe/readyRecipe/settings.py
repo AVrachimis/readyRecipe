@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-
+ 
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -52,7 +52,6 @@ LOGIN_REDIRECT_URL = '/ready_recipe/index'
 
 # The page users are directed to if they are not logged in.
 # This was set in a previous chapter. The registration package uses this, too.
-LOGIN_URL = 'auth_login'
 # Application definition
 
 INSTALLED_APPS = [
@@ -146,3 +145,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+
