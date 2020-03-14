@@ -2,6 +2,7 @@ from django.urls import path
 from ready_recipe import views
 from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls import url
 
 
 app_name = 'ready_recipe'
@@ -13,7 +14,9 @@ urlpatterns = [
     path('profile/',views.user_profile,name='user_profile'),
     path('register/',views.register,name='register'),
     path('logout/', views.user_logout, name='logout'),
-    path('login/', views.user_login, name='login'),
+    path('login', views.user_login,name='login'),
+    url(r'^(?P<primaryKey>\d+)/$',views.add_or_delete_recipe,name = 'add_or_delete_recipe')
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

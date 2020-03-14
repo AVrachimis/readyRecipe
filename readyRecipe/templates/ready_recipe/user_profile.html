@@ -4,7 +4,7 @@
 
     {% block title_block %}
 
-        {{current_user.username}}
+        {{request.user.username}}
 
     {% endblock %} 
 
@@ -51,24 +51,29 @@
             <div class="column">
                 <h2> My own Recipes</h2>
 
+        
                 <ol>
-                    {% for recipe in my_recipes %}
-                        <li>  {{ recipe.name }} </li> 
-                        <img src="{{ recipe.picture.url }}">> <br><br>
+                    {% for rec in own_rec_info %}
+                        <li><a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}">{{rec.0.name}}</a></li>
+                        <img src="{{ rec.0.picture.url }}">> <br> <br>
+
                     {% endfor %}
+
+
                 </ol>
             </div>
             
             <div class="column">
 
-                <h3> My saved Recipes</h3>
+                <h2> My saved Recipes</h2>
 
                 <ol>
-                    {% for rec in saved_recipes %}
-                        <li>  {{ rec.name }} </li> 
-                        <img src="{{ rec.picture.url }}">> <br> <br>
+                    {% for rec in fav_rec_info %}
+                        <li><a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}">{{rec.0.name}}</a></li>
+                        <img src="{{ rec.0.picture.url }}">> <br> <br>
 
                     {% endfor %}
+
 
                 </ol>
 

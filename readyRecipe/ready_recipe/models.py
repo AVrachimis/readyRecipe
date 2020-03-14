@@ -57,7 +57,7 @@ class UserProfile(models.Model):
 
 
     @classmethod
-    def add_favourite_recipe(cls, current_user, fav_recipe):
+    def add_favourite_recipe(cls, current_recipe, fav_recipe):
         saved_recipe, created = cls.object.get_or_create(current_user = user)
         saved_recipe.saved_Recipes.add(fav_recipe)
 

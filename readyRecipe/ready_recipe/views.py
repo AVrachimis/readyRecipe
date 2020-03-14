@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
+
 from datetime import datetime
 
 from ready_recipe.models import Recipe,Category,Comment,UserProfile
@@ -8,6 +10,9 @@ from ready_recipe.forms import RecipeForm,CommentForm,UserForm,UserProfileForm
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import redirect
+
+from django.template.defaultfilters import slugify
+
 
 
 
@@ -63,28 +68,28 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
     context_dict={}
 
     try: 
-        # we can find a category name slug with the given name?
-        #if we can't, the .get() method raises a DoesNotExist exception
         recipe = Recipe.objects.get(slug = recipe_name_slug)
-
-
         comment = Comment.objects.filter(recipe_id = recipe.id )
            
         context_dict['recipes'] = recipe
         context_dict['comments'] = comment
 
-        #current_user = User.objects.get(id = request.user.id)
         if request.user.is_authenticated:
-            current_user = request.user
+            # current_user refers to UserProfile 
+            # request.user refers to User
+            current_user, created = UserProfile.objects.get_or_create(user = request.user)
+            context_dict['Owner'] = request.user
+            if recipe in  current_user.saved_Recipes.all():
+                button_text = 'Remove from Saved Recipes'
+            else:
+                button_text = 'Add to Saved Recipes'
 
-            UserProfile.add_favourite_recipe(current_user,recipe)
+            context_dict['button'] = button_text
 
-
-
-            context_dict['Owner'] = current_user
             form = CommentForm()
             context_dict['form'] = form
         else:
+
             context_dict['Owner'] = None
             context_dict['form'] = None
 
@@ -206,40 +211,54 @@ def add_recipe(request):
 
 
 
+def get_recipe_info(recipes_qs):
+    recipes_info = []
+    for recipe in recipes_qs.all():
+        category_slug = slugify(recipe.category_id.name)
+        recipe_slug = slugify(recipe.name)
+        recipes_info.append([recipe,category_slug,recipe_slug])
+    return recipes_info
+
 @login_required
 def user_profile(request):
     context_dict={}
     
-    
-    if request.user.is_authenticated:
+    current_user, created = UserProfile.objects.get_or_create(user = request.user)
 
-        current_user, created = UserProfile.objects.get_or_create(user = request.user)
+    my_recipes = Recipe.objects.filter(owner_id = request.user.id)
 
-        my_recipes = Recipe.objects.filter(owner_id = request.user.id)
-
-        # recipes saved by the current user
-        fav_recipes = current_user.saved_Recipes.all()
-
-    #for recipe in saved_recipes.all():
-        #categoryId = str(recipe.category_id)
-        #recipa = Recipe.objects.get(id = recipe.id).category_id
-        #category = Category.objects.get(id = recipa)
-       # category = str(Category.objects.get(id = categoryId))
-        #recipe_category.append(category_id)
-     #   recipe_category[recipe.name]=recipe.category_id
-
-        context_dict['user'] = current_user
-        context_dict['my_recipes'] = my_recipes
-        context_dict['saved_recipes'] = fav_recipes
+    # recipes saved by the current user
+    fav_recipes = current_user.saved_Recipes.all()
+ 
+    context_dict['own_rec_info'] = get_recipe_info(my_recipes)
+    context_dict['fav_rec_info'] = get_recipe_info(fav_recipes)
 
 
     return render(request,'ready_recipe/user_profile.html',context=context_dict)
 
 
-  # recipe = Recipe.objects.get(slug = recipe_name_slug)
 
+@login_required
+def add_or_delete_recipe(request,primaryKey):
 
-     #   comment = Comment.objects.filter(recipe_id = recipe.id )
+    recipe = Recipe.objects.get(id = primaryKey)
+    current_user, created = UserProfile.objects.get_or_create(user = request.user)
+    recCategory = Category.objects.get(id = recipe.category_id.id)    
+    # if recipe exists in the saved recipes of the current user delete it
+    # if not add it
+    if recipe in current_user.saved_Recipes.all():
+        #remove the recipe from saved_Recipes
+        current_user.saved_Recipes.remove(recipe)
+    else:
+        # add the recipe to saved_Recipes
+        current_user.saved_Recipes.add(recipe)
+
+    cat = slugify(recCategory.name)
+    rep = slugify(recipe.name)
+    redirect_url = "ready_recipe/category/"+cat+'/'+rep+'/'
+    return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(cat,rep,)))
+    
+
 
 
 
