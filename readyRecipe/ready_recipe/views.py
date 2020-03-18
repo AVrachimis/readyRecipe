@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 
 from datetime import datetime
 
@@ -20,11 +20,10 @@ from django.template.defaultfilters import slugify
 
 def index(request):
     category_list = Category.objects.order_by('-name')
-    recipe_list = Recipe.objects.order_by('-views')[:5]
+    #recipe_list = Recipe.objects.order_by('-views')[:5]
 
 
     context_dict={}
-    context_dict['recipes'] = recipe_list
     context_dict['categories'] = category_list
 
     return render(request,'ready_recipe/index.html',context = context_dict)
@@ -98,7 +97,7 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
             if form.is_valid():
                 comment = form.save(commit = False)
                 comment.recipe_id = recipe
-                comment.owner_id = current_user
+                comment.owner_id = request.user
                 comment.save()
                 redirect_url = '/ready_recipe/category/'+category_name_slug+'/'+recipe_name_slug+'/'
                 return redirect(redirect_url)
@@ -158,11 +157,14 @@ def register(request):
 
 def user_login(request):
     context_dict = {}
-    
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('index'))
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
+
         if user:
             if user.is_active:
 
@@ -170,16 +172,13 @@ def user_login(request):
                 return redirect(reverse('ready_recipe:index'))
             else:
                 return HttpResponse("Your account is disabled.")
-                
         else:
             context_dict['success'] = False
             print(f"Invalid login details: {username}, {password}")
             return HttpResponse("Invalid login details supplied.")
-            #return render(request, 'ready_recipe/login.html', context_dict)
-
     else:
-        context_dict['success'] = True
-        return render(request, 'ready_recipe/login.html', context_dict)
+        context_dict["success"] = True
+        return render(request, 'ready_recipe/login.html',context_dict)
 
 
 

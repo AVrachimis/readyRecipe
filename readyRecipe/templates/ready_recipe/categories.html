@@ -1,0 +1,10 @@
+
+
+<ul class="nav flex-column">
+
+    {% for k in information.items %} 
+
+        <li>{{ k }} - {{ information.items|dict_key:k }}</li>
+    
+    {% endfor %}
+</ul>

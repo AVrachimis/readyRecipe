@@ -19,14 +19,14 @@ class RecipeForm(forms.ModelForm):
     calories = forms.IntegerField(help_text = 'Calories per portion')
     ingredients = forms.CharField(widget=forms.Textarea,help_text = "Ingredients")
     average_overall_price = forms.FloatField(help_text = 'Price per portion')
-    views = forms.IntegerField(widget=forms.HiddenInput(),required=False)
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
     owner_id = forms.IntegerField(widget=forms.HiddenInput(),required=False)
 
 
+
     class Meta:
         model = Recipe
-        exclude = ('views','slug','owner_id',)
+        exclude = ('slug','owner_id',)
 
 class CommentForm(forms.ModelForm):
     date = forms.DateField(widget=forms.HiddenInput(),required=False,initial=datetime.date.today())
@@ -40,9 +40,6 @@ class CommentForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
-
-
     class Meta:
         model = UserProfile
         fields = ()

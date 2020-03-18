@@ -11,7 +11,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class RecipeAdmin(admin.ModelAdmin):
     prepolulated_fields = {'slug':('name')}
-    list_display = ['name','picture','portions','difficulty','category_id','owner_id','views']
+    list_display = ['name','picture','portions','difficulty','category_id','owner_id']
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['date','recommentations','recipe_id','owner_id']

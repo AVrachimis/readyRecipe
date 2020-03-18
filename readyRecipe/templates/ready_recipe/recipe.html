@@ -25,40 +25,78 @@
             max-width: 60%;
             height: auto;
           }
+          * {
+            box-sizing: border-box;
+            }
+
+            /* Create two equal columns that floats next to each other */
+            .column {
+                float: left;
+                width: 12%;
+                padding: 10px;
+            }
+
+            /* Clear floats after the columns */
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+
         </style>
 			
         </div>
+
+        {% load static %}
+
    
         {% if recipes.picture%}
-            <img src="{{ recipes.picture.url }}">> <br>
+            <img src="{{ recipes.picture.url }}"> <br>
         {%endif%}
 
-        <li><a href="{% url 'ready_recipe:add_or_delete_recipe' primaryKey=recipes.id %}">
-        <button type="button" class="btn btn-secondary">{{button}}</button>
-        </a></li>
 
-            <h3>Portions</h3> 
-            <strong>{{recipes.portions}}</strong> <br>
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'ready_recipe:add_or_delete_recipe' primaryKey=recipes.id %}">
+            <button type="button" class="btn btn-secondary">{{button}}</button>
+            </a>
+        {% endif %}
 
-            <h3>Difficulty</h3> 
-            <strong>{{recipes.difficulty}}</strong> <br>
-            
-            <h3>Time Needed</h3> 
-            <strong>{{recipes.completion_time}}</strong> <br>
-            
-            <h3>Calories Per Portion</h3> 
-            <strong>{{recipes.calories}}</strong> <br>
-            
-            <h3>Average Price</h3> 
-            <strong>£{{recipes.average_overall_price}}</strong> <br>
-            
-            
-            <h3>Instructions</h3> 
-            <strong>{{recipes.instuction}}</strong> <br>
+        <div class="row">
+
+            <div class="column">
+                <h3>Portions</h3> 
+                <strong>{{recipes.portions}}</strong> <br>
+            </div>
+
+            <div class="column">
+                <h3>Difficulty</h3> 
+                <strong>{{recipes.difficulty}}</strong> <br>
+            </div>
+            <div class="column">
+                <h3>Time Needed</h3> 
+                <strong>{{recipes.completion_time}}</strong> <br>
+            </div>
+            <div class="column">
+                <h3>Calories Per Portion</h3> 
+                <strong>{{recipes.calories}}</strong> <br>    
+            </div>
+            <div class="column">
+                <h3>Average Price</h3> 
+                <strong>£{{recipes.average_overall_price}}</strong> <br>
+            </div>
+
+        </div>
+
 
             <h3>Ingredients</h3> 
-            <strong>{{recipes.ingredients}}</strong> <br>
+            <strong>{{recipes.ingredients|linebreaks}}</strong> <br>
+        
 
+            <h3>Instructions</h3> 
+            <strong>{{recipes.instuction|linebreaks}}</strong> <br>
+
+       
             {% if comments %}
             <h3>Comments</h3> 
 
@@ -69,6 +107,7 @@
                 <br>
                 
                 {% endfor %}
+                <br>
             {% else %}
                 <h3>No Comments for this Recipe</h3>
 
