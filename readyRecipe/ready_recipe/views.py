@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login,logout
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect,HttpResponse
 
@@ -9,7 +12,6 @@ from ready_recipe.models import Recipe,Category,Comment,UserProfile
 from ready_recipe.forms import RecipeForm,CommentForm,UserForm,UserProfileForm
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.shortcuts import redirect
 
 from django.template.defaultfilters import slugify
 
@@ -122,13 +124,7 @@ def register(request):
     registered = False
     context_dict = {}
     if request.method == 'POST':
-        #user_form = UserForm(request.POST)
-        #profile_form = UserProfileForm()
-        #context_dict['user_form'] = user_form
-        #context_dict['profile_form'] = profile_form
-        #context_dict["registered"] = registered
-        #return render(request, 'ready_recipe/register.html', context=context_dict)
-
+ 
         user_form = UserForm(request.POST)
         profile_form = UserProfileForm(request.POST)
         
@@ -201,12 +197,17 @@ def add_recipe(request):
             recipe.views = 0
             recipe.owner_id = current_user
             recipe.save()
-            return redirect('/ready_recipe/index/')
+            recipe_slug = slugify(recipe.name)
+            category_slug = slugify(recipe.category_id.name)
+            return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(category_slug,recipe_slug,)))
+
         else:
             print(form.errors)
     else:
         form = RecipeForm()
     return render(request,'ready_recipe/add_recipe.html',{'form':form})
+
+
 
 
 
@@ -224,6 +225,7 @@ def user_profile(request):
     
     current_user, created = UserProfile.objects.get_or_create(user = request.user)
 
+    # recipes added by the current user
     my_recipes = Recipe.objects.filter(owner_id = request.user.id)
 
     # recipes saved by the current user
@@ -235,6 +237,27 @@ def user_profile(request):
 
     return render(request,'ready_recipe/user_profile.html',context=context_dict)
 
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('change_password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(request, 'ready_recipe/change_password.html', {'form': form})    
+
+@login_required
+def delete_user(request,username):
+    current_user = User.objects.get(username = username)
+    current_user.delete()
+    return redirect(reverse('ready_recipe:index'))
 
 
 @login_required
@@ -258,8 +281,32 @@ def add_or_delete_recipe(request,primaryKey):
     return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(cat,rep,)))
     
 
+def search(request):
+    context_dict={}
+    results=[]
+    recipes = Recipe.objects.all()
+    search=''
 
+    if request.method == 'POST':
+        search = request.POST.get("search")
 
+    if search == "" or search=="all" or (not search):
+        results = recipes
 
+    else:
+        search_split = search.split()
+        for recipe in recipes:
+            for se in search_split:
+                if se.lower() in recipe.name.lower():
+                    results.append(recipe)
 
+    results_info=[]
+    for recipe in results:
+        category_slug = slugify(recipe.category_id.name)
+        recipe_slug = slugify(recipe.name)
+        results_info.append([recipe,category_slug,recipe_slug])
 
+    context_dict['results'] = results_info
+    context_dict['search'] = search
+
+    return render(request,'ready_recipe/search.html',context_dict)

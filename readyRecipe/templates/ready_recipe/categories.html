@@ -2,9 +2,66 @@
 
 <ul class="nav flex-column">
 
-    {% for k in information.items %} 
+    {% if categories %}
 
-        <li>{{ k }} - {{ information.items|dict_key:k }}</li>
+        {% for c in categories %}
+
+        
+        <button class="accordion">{{ c.name }}</button>
+  
+            {% if recipes %}
+            <div class="panel">  
+                <p> 
+                    {% for recipe in recipes %}
+                        {% ifequal recipe.category_id.id  c.id %}
+
+                            <ol><a href="{% url 'ready_recipe:show_recipe' c.slug recipe.slug %}">{{ recipe.name }}</a></ol>
+
+                        {% endifequal %}
+                    {% endfor %}
+                </p>
+            </div>
+
+            {% endif %}
+
+        {% endfor %}
+
+    {% else %}
+
+        <li><strong>There are no categories present.</strong></li>
+
+    {% endif %}
+
+
+    <style>
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  display: none;
+  overflow: hidden;
+}
+
+    </style>
     
-    {% endfor %}
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
+    </script>
+    
+    
+
+
 </ul>
+

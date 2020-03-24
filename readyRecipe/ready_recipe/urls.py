@@ -15,7 +15,12 @@ urlpatterns = [
     path('register/',views.register,name='register'),
     path('logout/', views.user_logout, name='logout'),
     path('login', views.user_login,name='login'),
-    url(r'^(?P<primaryKey>\d+)/$',views.add_or_delete_recipe,name = 'add_or_delete_recipe')
+    url(r'^(?P<primaryKey>\d+)/$',views.add_or_delete_recipe,name = 'add_or_delete_recipe'),
+    path('search',views.search,name = 'search'),
+    url(r'^delete/(?P<username>[\w|\W.-]+)/$', views.delete_user, name='delete_user'),
+    url(r'^password/$', views.change_password, name='change_password'),
+
+
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

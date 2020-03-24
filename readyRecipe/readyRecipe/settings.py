@@ -92,6 +92,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media', 
             ],
+            'libraries':{
+                'template_tags':'ready_recipe.template_tags.template_tags',
+            }
         },
     },
 ]

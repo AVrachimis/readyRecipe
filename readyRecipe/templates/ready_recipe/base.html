@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 
 {% load staticfiles %}
-
+{% load template_tags %}
 
 
 <html lang="en">
     <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Jekyll v3.8.5">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    
     <link rel="icon" href="{% static 'images/icon.png' %}">
+
    <title>
        ReadyRecipe -
        {% block title_block %} {% endblock %} 
@@ -43,14 +49,16 @@
                     <li class="nav-item "><a class="nav-link" href="{% url 'ready_recipe:add_recipe' %}">Upload your Recipe</a></li>
 
                     {% if user.is_authenticated %}
-                    <li class="nav-item dropdown show">
-                        <a class="nav-link dropdown-toggle" href="{% url 'ready_recipe:user_profile' %}" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                    <li class="nav-item dropdown ">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class='far fa-user'></i>
                         </a>
-                        <div class="dropdown-menu show" aria-labelledby="dropdown01">
-                          <a class="dropdown-item" href="{% url 'ready_recipe:user_profile' %}">Profile</a>
-                        <!--Change password should be added here-->
-                          <a class="dropdown-item"  href="{% url 'ready_recipe:logout' %}?next=/index/">Log out</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'ready_recipe:user_profile' %}">Profile</a>
+                            <a class="dropdown-item" href="{% url 'ready_recipe:change_password' %}">Change Password</a>
+                            <a class="dropdown-item"  href="{% url 'ready_recipe:delete_user' username=request.user.username %}?next=/index/">Delete account</a>
+                            <a class="dropdown-item"  href="{% url 'ready_recipe:logout' %}?next=/index/">Log out</a>
                         </div>
                       </li>
 
@@ -63,6 +71,10 @@
                     
                     {% endif %}
                     <!--Search input should be added here -->
+                    <form id = "searchform" method="POST" action="{% url 'ready_recipe:search' %}" class="nav-link" style="display: inline;" >{% csrf_token %}
+                        <input name="search" id="searchbox" value = "{{request.GET.search}}" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                    </form>
+
 
 
                 </ul>
@@ -77,7 +89,7 @@
             <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                 <div class="sidebar-sticky">
                 {% block sidebar_block %}
-
+                    {% get_category_list %}
                 {% endblock %}
                 </div>
             </nav>

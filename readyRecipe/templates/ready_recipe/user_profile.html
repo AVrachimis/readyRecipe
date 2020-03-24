@@ -13,7 +13,6 @@
 
     {% block body_block %}
 
-    <div> 
     {% if user %}
         <div class="jumbotron p-4">
         <div class="container">
@@ -55,7 +54,7 @@
                 <ol>
                     {% for rec in own_rec_info %}
                         <li><a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}">{{rec.0.name}}</a></li>
-                        <img src="{{ rec.0.picture.url }}">> <br> <br>
+                        <img src="{{ rec.0.picture.url }}"> <br> <br>
 
                     {% endfor %}
 
@@ -83,7 +82,6 @@
 
         </div>
         {% endif %}
-    </div>
 
     {% endblock %} 
 
