@@ -52,12 +52,8 @@ class Recipe(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    user1 = models.OneToOneField(User,on_delete=models.CASCADE)
     saved_Recipes = models.ManyToManyField(Recipe)
-
-
-
-
  
 
 

@@ -78,7 +78,7 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
         if request.user.is_authenticated:
             # current_user refers to UserProfile 
             # request.user refers to User
-            current_user, created = UserProfile.objects.get_or_create(user = request.user)
+            current_user, created = UserProfile.objects.get_or_create(user1 = request.user)
             context_dict['Owner'] = request.user
             if recipe in  current_user.saved_Recipes.all():
                 button_text = 'Remove from Saved Recipes'
@@ -223,7 +223,7 @@ def get_recipe_info(recipes_qs):
 def user_profile(request):
     context_dict={}
     
-    current_user, created = UserProfile.objects.get_or_create(user = request.user)
+    current_user, created = UserProfile.objects.get_or_create(user1 = request.user)
 
     # recipes added by the current user
     my_recipes = Recipe.objects.filter(owner_id = request.user.id)
@@ -264,7 +264,7 @@ def delete_user(request,username):
 def add_or_delete_recipe(request,primaryKey):
 
     recipe = Recipe.objects.get(id = primaryKey)
-    current_user, created = UserProfile.objects.get_or_create(user = request.user)
+    current_user, created = UserProfile.objects.get_or_create(user1 = request.user)
     recCategory = Category.objects.get(id = recipe.category_id.id)    
     # if recipe exists in the saved recipes of the current user delete it
     # if not add it
