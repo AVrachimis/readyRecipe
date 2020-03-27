@@ -11,7 +11,7 @@ class RecipeForm(forms.ModelForm):
     TIME_NEEDED = ( ('1','1-15 minutes'),('2','15-30 minutes' ),('3','30-60 minutes'),('4','1-1.30 hours'),('5','1.30-2 hours'),('6','2-2.30 hours'),('7','More than 2.30 hours'),)
 
     name = forms.CharField(max_length=300,help_text = "Recipe Title")
-    picture = forms.ImageField(required = False,help_text = 'Photo ')
+    picture = forms.ImageField(required = True,help_text = 'Photo ')
     instuction = forms.CharField(widget=forms.Textarea,help_text = "Method")
     portions = forms.ChoiceField(choices = PORTIONS,help_text="Portions")
     difficulty = forms.ChoiceField(choices=DIFFICULTY,help_text = 'Difficulty' )
