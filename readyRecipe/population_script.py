@@ -1,4 +1,5 @@
 import os
+import random
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','readyRecipe.settings')
@@ -42,7 +43,7 @@ def populate():
                  "price": 1.52,
                  "category": "Chicken and Turkey",
                  "user": "JohnBrown",
-                 "picture": "",
+                 "picture": "ChickenTikkaMasala.jpg",
                  "portions": 4,
                  "difficulty": 3,
                  "completion_time": '3',
@@ -482,6 +483,18 @@ def populate():
      for category in Category.objects.all():
           for recipe in Recipe.objects.filter(category_id = category):
                print("-{}-{}".format(category.name,recipe.name))
+
+
+     # add randomly recipes to the users as saved recipes
+     recipes = Recipe.objects.all()
+     for user in User.objects.all():
+          num_of_saved_recipes = random.choice([2,3,4,5,6])
+          userProf = UserProfile.objects.get(id = user.id)
+          for i in range(num_of_saved_recipes):
+               recipe = random.choice(recipes)
+               userProf.saved_Recipes.add(recipe)
+
+
      
 
 

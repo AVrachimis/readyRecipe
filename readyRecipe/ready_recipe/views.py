@@ -8,8 +8,8 @@ from django.http import HttpResponseRedirect,HttpResponse
 
 from datetime import datetime
 
-from ready_recipe.models import Recipe,Category,Comment,UserProfile
-from ready_recipe.forms import RecipeForm,CommentForm,UserForm,UserProfileForm
+from ready_recipe.models import *
+from ready_recipe.forms import *
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -194,7 +194,6 @@ def add_recipe(request):
         form = RecipeForm(request.POST, request.FILES)
         if form.is_valid():
             recipe = form.save(commit = False)
-            recipe.views = 0
             recipe.owner_id = current_user
             recipe.save()
             recipe_slug = slugify(recipe.name)
@@ -207,6 +206,22 @@ def add_recipe(request):
         form = RecipeForm()
     return render(request,'ready_recipe/add_recipe.html',{'form':form})
 
+
+@login_required
+def add_category(request):
+    form = CategoryForm()
+    if request.user.is_superuser:
+        if request.method =='POST':
+            form = CategoryForm(request.POST)
+            if form.is_valid():
+                category = form.save(commit=True)
+                return HttpResponseRedirect(reverse('ready_recipe:index'))
+            else:
+                print(form.errors)
+    else:
+        return HttpResponseRedirect(reverse('ready_recipe:index'))
+
+    return render(request,'ready_recipe/add_category.html',{'form':form})
 
 
 

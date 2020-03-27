@@ -22,16 +22,14 @@ class RecipeForm(forms.ModelForm):
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
     owner_id = forms.IntegerField(widget=forms.HiddenInput(),required=False)
 
-
-
     class Meta:
         model = Recipe
         exclude = ('slug','owner_id',)
 
+
 class CommentForm(forms.ModelForm):
     date = forms.DateField(widget=forms.HiddenInput(),required=False,initial=datetime.date.today())
     recommentations = forms.CharField(widget=forms.Textarea,help_text="Add your own Comment")
-
 
     class Meta:
         model = Comment
@@ -44,13 +42,21 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ()
 
+
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
 
     class Meta:
         model = User
-        fields = ('username','email','password')
+        fields = ('username','email','password',)
 
 
+class CategoryForm(forms.ModelForm):
+    name = forms.CharField(max_length=100,help_text = "Category Name")
+    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        model = Category
+        fields = ('name',)
 
 

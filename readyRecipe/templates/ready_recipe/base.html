@@ -56,6 +56,9 @@
                         </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="{% url 'ready_recipe:user_profile' %}">Profile</a>
+                            {% if user.is_superuser %}
+                                <a class="dropdown-item" href="{% url 'ready_recipe:add_category' %}">Add Category</a>
+                            {% endif %}
                             <a class="dropdown-item" href="{% url 'ready_recipe:change_password' %}">Change Password</a>
                             <a class="dropdown-item"  href="{% url 'ready_recipe:delete_user' username=request.user.username %}?next=/index/">Delete account</a>
                             <a class="dropdown-item"  href="{% url 'ready_recipe:logout' %}?next=/index/">Log out</a>
@@ -70,7 +73,6 @@
                     <li class="nav-item "><a class="nav-link" href="{% url 'ready_recipe:login' %}">Login</a></li>
                     
                     {% endif %}
-                    <!--Search input should be added here -->
                     <form id = "searchform" method="POST" action="{% url 'ready_recipe:search' %}" class="nav-link" style="display: inline;" >{% csrf_token %}
                         <input name="search" id="searchbox" value = "{{request.GET.search}}" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
                     </form>
