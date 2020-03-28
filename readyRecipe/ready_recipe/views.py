@@ -292,21 +292,30 @@ def add_or_delete_recipe(request,primaryKey):
 
     cat = slugify(recCategory.name)
     rep = slugify(recipe.name)
-    redirect_url = "ready_recipe/category/"+cat+'/'+rep+'/'
     return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(cat,rep,)))
     
 
-def search(request):
+def search_helper(sort_by,attri,rec_qs):
+    results_info=[]
+    messages = {1:'Price per portion: £',2:'Price per portion: £',3:'Difficulty: ',4:'Calories per portion: ',5:'Completion time: ',6:'Portion: '}
+    for recipe in rec_qs:
+        results_info.append([recipe,slugify(recipe.category_id.name),slugify(recipe.name),messages[sort_by],getattr(recipe,attri)])
+    return results_info
+
+        
+
+
+def search(request,search=None,sorting=None):
     context_dict={}
     results=[]
     recipes = Recipe.objects.all()
-    search=''
 
     if request.method == 'POST':
         search = request.POST.get("search")
 
-    if search == "" or search=="all" or (not search):
+    if (not search.strip()) or "All the recipes" or (not search):
         results = recipes
+        search="All the recipes"
 
     else:
         search_split = search.split()
@@ -316,10 +325,37 @@ def search(request):
                     results.append(recipe)
 
     results_info=[]
-    for recipe in results:
-        category_slug = slugify(recipe.category_id.name)
-        recipe_slug = slugify(recipe.name)
-        results_info.append([recipe,category_slug,recipe_slug])
+    if sorting=='1':
+        results = sorted(results, key=lambda rec: rec.average_overall_price) 
+        results_info = search_helper(1,'average_overall_price',results)
+
+    elif sorting=='2':
+        results = sorted(results, key=lambda rec: rec.average_overall_price,reverse=True )
+        results_info = search_helper(2,'average_overall_price',results)
+
+    elif sorting=='3':
+        results = sorted(results, key=lambda rec: rec.difficulty )    
+        results_info = search_helper(3,'difficulty',results)
+ 
+    elif sorting=='4':  
+        results = sorted(results, key=lambda rec: rec.calories)
+        results_info = search_helper(4,'calories',results)    
+   
+    elif sorting=='5':
+        results = sorted(results, key=lambda rec: rec.completion_time)     
+        results_info = search_helper(5,'completion_time',results)          
+  
+    elif sorting=='6':    
+        results = sorted(results, key=lambda rec: rec.portions)   
+        results_info = search_helper(6,'portions',results)          
+  
+    else:
+        for recipe in results:
+            category_slug = slugify(recipe.category_id.name)
+            recipe_slug = slugify(recipe.name)
+            results_info.append([recipe,category_slug,recipe_slug,'',''])
+
+
 
     context_dict['results'] = results_info
     context_dict['search'] = search

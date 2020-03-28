@@ -17,7 +17,8 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('login', views.user_login,name='login'),
     url(r'^(?P<primaryKey>\d+)/$',views.add_or_delete_recipe,name = 'add_or_delete_recipe'),
-    path('search',views.search,name = 'search'),
+    url(r'^search/$', views.search, name='search'),
+    url(r'^search/(?P<search>[\w|\W.-]+)/(?P<sorting>[\w|\W.-]+)/$',views.search,name = 'search'),
     url(r'^delete/(?P<username>[\w|\W.-]+)/$', views.delete_user, name='delete_user'),
     url(r'^password/$', views.change_password, name='change_password'),
 

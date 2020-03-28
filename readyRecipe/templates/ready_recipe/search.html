@@ -6,18 +6,42 @@
 {% endblock %}
 
 {% block body_block %}
- 
-<div class="jumbotron p-4">
-    <div class="container">
-        <h1 class="jumbotron-heading">Results for '{{search}}'</h1>
-    </div>
-</div>
 <style> 
     img {
     max-width: 15%;
     height: auto;
   }
 </style>
+
+<div class="jumbotron p-4">
+    <div class="container">
+        <h1 class="jumbotron-heading">Results for '{{search}}'</h1>
+    </div>
+</div>
+
+<button class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <strong>Sort By</strong>
+    </a>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="{% url 'ready_recipe:search' search '1' %}">Price(low to high)</a>
+        <a class="dropdown-item" href="{% url 'ready_recipe:search' search '2' %}">Price(high to low)</a>
+        <a class="dropdown-item" href="{% url 'ready_recipe:search' search '3' %}">Difficulty(low to high)</a>
+        <a class="dropdown-item" href="{% url 'ready_recipe:search' search '4' %}">Calories(low to high)</a>
+        <a class="dropdown-item" href="{% url 'ready_recipe:search' search '5' %}">Time Needed(low to high)</a>
+        <a class="dropdown-item" href="{% url 'ready_recipe:search' search '6' %}">Portions(low to high)</a>
+    </div>
+</button>
+
+<script>
+
+    var e = document.getElementById("country");
+    var result = e.options[e.selectedIndex].value;
+          
+</script>
+
+
+
 
 <div>
 
@@ -48,7 +72,7 @@
 
         <img src="{{result.0.picture.url }}"> <br> <br>
 
-
+        <strong>{{result.3}}{{result.4}}</strong>
     </p>
 </div>
 
