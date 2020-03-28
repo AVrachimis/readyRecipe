@@ -20,6 +20,8 @@
             <h1 class="jumbotron-heading">{{request.user.username}}</h1>
                 
         </div>
+    </div>
+
     
         <style> 
             img {
@@ -48,33 +50,47 @@
         <div class="row">
             
             <div class="column">
-                <h2> My own Recipes</h2>
+                <h2 style="text-decoration: underline;" > My own Recipes</h2><br>
 
-        
-                <ol>
-                    {% for rec in own_rec_info %}
-                        <li><a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}">{{rec.0.name}}</a></li>
-                        <img src="{{ rec.0.picture.url }}"> <br> <br>
+                        {% for rec in own_rec_info %}   
+                    
+                        <div>
+                            <h3 class="list-group-item-heading">
+                                <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: slategrey;">{{rec.0.name}}</a>
+                            </h3>
 
-                    {% endfor %}
+                            <p class="list-group-item-text">
 
+                                <img src="{{ rec.0.picture.url }}">
+                    
+                            </p>
+                        </div>
 
-                </ol>
+                        {% endfor %}
             </div>
             
             <div class="column">
 
-                <h2> My saved Recipes</h2>
+                <h2 style="text-decoration: underline;"> My saved Recipes</h2><br>
 
-                <ol>
+
                     {% for rec in fav_rec_info %}
-                        <li><a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}">{{rec.0.name}}</a></li>
-                        <img src="{{ rec.0.picture.url }}">> <br> <br>
+                    <div>
+                        <h3 class="list-group-item-heading">
+
+                            <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: slategrey;">{{rec.0.name}}</a>
+                        </h3>
+
+                        <p class="list-group-item-text">
+
+                            <img src="{{ rec.0.picture.url }}">>
+                
+                        </p>
+                    </div>
 
                     {% endfor %}
 
 
-                </ol>
 
             </div>
 

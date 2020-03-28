@@ -10,26 +10,45 @@
 
 
     {% block body_block %}
-
+    <style> 
+        img {
+        max-width: 15%;
+        height: auto;
+      }
+    </style>
     <div>
 
 
         
         {% if category %}
-        
-            <h1>{{ category.name }}</h1>
-        
+        <div class="jumbotron p-4">
+            <div class="container">
+                <h1 class="jumbotron-heading">{{category.name}}</h1>
+            </div>
+        </div>
+                
             {% if recipes %}
+
+                
+                    {% for recipe in recipes %}
+                    <div class="list-group-item">
+
+                        
+                        <h3 class="list-group-item-heading">
+                            <a href="{% url 'ready_recipe:show_recipe' category_name_slug=category.slug recipe_name_slug=recipe.slug %}">{{ recipe.name }}</a>
+                        </h3>
+
+                        <p class="list-group-item-text">
+
+                            <img src="{{recipe.picture.url }}"> <br> <br>
+
+                        </p>
+
+
+                    </div>
+
+                    {% endfor %}
         
-            <ul>
-        
-                {% for recipe in recipes %}
-        
-                    <a href="/ready_recipe/category/{{ category.slug }}/{{recipe.slug}}/" style = "color: black;">{{ recipe.name }}</a>  <br>
-        
-                {% endfor %}
-        
-            </ul>
         
             {% else %}
         

@@ -31,6 +31,7 @@ def index(request):
     return render(request,'ready_recipe/index.html',context = context_dict)
 
 
+
 def show_category(request, category_name_slug):
     #Create a context dictionary which we can pass to the template rendering engine
     context_dict={}
@@ -166,12 +167,9 @@ def user_login(request):
 
                 login(request, user)
                 return redirect(reverse('ready_recipe:index'))
-            else:
-                return HttpResponse("Your account is disabled.")
         else:
-            context_dict['success'] = False
-            print(f"Invalid login details: {username}, {password}")
-            return HttpResponse("Invalid login details supplied.")
+            context_dict["success"] = False
+            return render(request, 'ready_recipe/login.html',context_dict)
     else:
         context_dict["success"] = True
         return render(request, 'ready_recipe/login.html',context_dict)
@@ -312,8 +310,7 @@ def search(request,search=None,sorting=None):
 
     if request.method == 'POST':
         search = request.POST.get("search")
-
-    if (not search.strip()) or "All the recipes" or (not search):
+    if (not search.strip()) or search=="All the recipes" or (not search):
         results = recipes
         search="All the recipes"
 
@@ -328,32 +325,40 @@ def search(request,search=None,sorting=None):
     if sorting=='1':
         results = sorted(results, key=lambda rec: rec.average_overall_price) 
         results_info = search_helper(1,'average_overall_price',results)
+        context_dict['message'] = 'Price(low to high)'
+
 
     elif sorting=='2':
         results = sorted(results, key=lambda rec: rec.average_overall_price,reverse=True )
         results_info = search_helper(2,'average_overall_price',results)
+        context_dict['message'] = 'Price(high to low)'
 
     elif sorting=='3':
         results = sorted(results, key=lambda rec: rec.difficulty )    
         results_info = search_helper(3,'difficulty',results)
+        context_dict['message'] = 'Difficulty(low to high)'
  
     elif sorting=='4':  
         results = sorted(results, key=lambda rec: rec.calories)
         results_info = search_helper(4,'calories',results)    
+        context_dict['message'] = 'Calories(low to high)'
    
     elif sorting=='5':
         results = sorted(results, key=lambda rec: rec.completion_time)     
-        results_info = search_helper(5,'completion_time',results)          
+        results_info = search_helper(5,'completion_time',results)     
+        context_dict['message'] = 'Time Needed(low to high)'     
   
     elif sorting=='6':    
         results = sorted(results, key=lambda rec: rec.portions)   
-        results_info = search_helper(6,'portions',results)          
+        results_info = search_helper(6,'portions',results)     
+        context_dict['message'] = 'Portions(low to high)'     
   
     else:
         for recipe in results:
             category_slug = slugify(recipe.category_id.name)
             recipe_slug = slugify(recipe.name)
             results_info.append([recipe,category_slug,recipe_slug,'',''])
+            context_dict['message'] = 'Sort By'
 
 
 
