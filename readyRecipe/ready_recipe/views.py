@@ -33,54 +33,50 @@ def index(request):
 
 
 def show_category(request, category_name_slug):
-    #Create a context dictionary which we can pass to the template rendering engine
     context_dict={}
 
     try: 
-        # we can find a category name slug with the given name?
-        #if we can't, the .get() method raises a DoesNotExist exception
+        # find a category with the given slug
         category = Category.objects.get(slug = category_name_slug)
         
-        # Retrieve all of the associated pages.
-        # The filter() will return a list of page objects or an empty list.
+        # queryset with the recipes of the given category
         recipes = Recipe.objects.filter(category_id=category)
         
-        # Adds our results list to the template context under name pages.
+        # add recipes and categories to the context_dict
         context_dict['recipes'] = recipes
-        
-        # We also add the category object from
-        # the database to the context dictionary.
-        # We'll use this in the template to verify that the category exists.
         context_dict['category'] = category
     
+    # if category does not exist
     except Category.DoesNotExist:
-        # We get here if we didn't find the specified category.
-        # Don't do anything -
-        # the template will display the "no category" message for us.
         context_dict['category'] = None
         context_dict['recipes'] = None
 
-    # Go render the response and return it to the client.
     return render(request, 'ready_recipe/category.html', context=context_dict)
 
 
 
 def show_recipe(request, category_name_slug, recipe_name_slug):
-    #Create a context dictionary which we can pass to the template rendering engine
     context_dict={}
 
     try: 
+        # get the recipe with the given slug
         recipe = Recipe.objects.get(slug = recipe_name_slug)
+        # get all the comments of the current recipe
         comment = Comment.objects.filter(recipe_id = recipe.id )
-           
+        
+        # add recipe and comments to the contect_dict
         context_dict['recipes'] = recipe
         context_dict['comments'] = comment
 
+        # check whether the user is logged in
         if request.user.is_authenticated:
+
             # current_user refers to UserProfile 
             # request.user refers to User
             current_user, created = UserProfile.objects.get_or_create(user1 = request.user)
-            context_dict['Owner'] = request.user
+            
+            # check if the current recipe exists in the saved recipes of the user
+            # and adjust the button text accordingly
             if recipe in  current_user.saved_Recipes.all():
                 button_text = 'Remove from Saved Recipes'
             else:
@@ -88,86 +84,89 @@ def show_recipe(request, category_name_slug, recipe_name_slug):
 
             context_dict['button'] = button_text
 
+            # also, add the comment form
             form = CommentForm()
             context_dict['form'] = form
         else:
 
-            context_dict['Owner'] = None
             context_dict['form'] = None
 
+        # comment form
         if request.method =='POST':
             form = CommentForm(request.POST)
+
+            # recipe id is the id of the current recipe
+            # and owner id is the id of the logged in user
             if form.is_valid():
                 comment = form.save(commit = False)
                 comment.recipe_id = recipe
                 comment.owner_id = request.user
                 comment.save()
-                redirect_url = '/ready_recipe/category/'+category_name_slug+'/'+recipe_name_slug+'/'
-                return redirect(redirect_url)
+                return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(category_name_slug,recipe_name_slug,)))
+
             else:
                 print(form.errors)
 
     except Recipe.DoesNotExist:
-        # We get here if we didn't find the specified category.
-        # Don't do anything -
-        # the template will display the "no category" message for us.
-        #context_dict['category'] = None
         context_dict['recipes'] = None
         context_dict['comments'] = None
         context_dict['form'] = None
 
-    # Go render the response and return it to the client.
     return render(request, 'ready_recipe/recipe.html', context=context_dict)
 
 
 
 def register(request):
-    registered = False
     context_dict = {}
+
     if request.method == 'POST':
- 
+        # user and userprofile forms
         user_form = UserForm(request.POST)
         profile_form = UserProfileForm(request.POST)
         
+        # check if both are valid and connect user with userprofile
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
             user.save()
             profile = profile_form.save(commit=False)
-            profile.user = user
+            profile.user1 = user
             profile.save()
-            registered = True
-            new_user = authenticate(username=user_form.cleaned_data['username'],
-                                    password = user_form.cleaned_data['password'])
+            new_user = authenticate(username=user_form.cleaned_data['username'],password = user_form.cleaned_data['password'])
+            # once the account is created, log in and redirect to the index page
             login(request,new_user)
-
+            return HttpResponseRedirect(reverse('ready_recipe:index'))
 
     else:
+
         user_form = UserForm()
         profile_form = UserProfileForm()
+
     context_dict["user_form"] = user_form
     context_dict["profile_form"] = profile_form
-    context_dict["registered"] = registered
     return render(request, 'ready_recipe/register.html', context_dict)
 
 
 
 def user_login(request):
     context_dict = {}
+    # if user is already logged in redirect it to the index page
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('index'))
 
     if request.method == 'POST':
+        # get the username and password and try to log in
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
 
+        # if the information given are corrent, log in and redirect to index page
         if user:
             if user.is_active:
-
                 login(request, user)
                 return redirect(reverse('ready_recipe:index'))
         else:
+            # else error messages appear and user can try again
             context_dict["success"] = False
             return render(request, 'ready_recipe/login.html',context_dict)
     else:
@@ -178,7 +177,8 @@ def user_login(request):
 
 @login_required
 def user_logout(request):
-    #Since we know the user is logged in, we can now just log out
+    #Since we knoare sure that the user is logged 
+    # in because of the @login_required, we can just log out
     logout(request)
     #take the user back to the homepage
     return redirect(reverse('ready_recipe:index'))
@@ -186,28 +186,38 @@ def user_logout(request):
 
 @login_required
 def add_recipe(request):
-    current_user = User.objects.get(id = request.user.id)
-
-    if request.method == 'POST':
-        form = RecipeForm(request.POST, request.FILES)
-        if form.is_valid():
-            recipe = form.save(commit = False)
-            recipe.owner_id = current_user
-            recipe.save()
-            recipe_slug = slugify(recipe.name)
-            category_slug = slugify(recipe.category_id.name)
-            return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(category_slug,recipe_slug,)))
-
+    context_dict={}
+    try:
+        # get the current user
+        current_user = User.objects.get(id = request.user.id)
+        if request.method == 'POST':
+            # form to upload your own recipe
+            form = RecipeForm(request.POST, request.FILES)
+            if form.is_valid():
+                # owner of the recipe is the current user
+                # save the recently created recipe and redirect to the page of that recipe
+                recipe = form.save(commit = False)
+                recipe.owner_id = current_user
+                recipe.save()
+                return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(slugify(recipe.category_id.name),slugify(recipe.name),)))
+            else:
+                print(form.errors)
         else:
-            print(form.errors)
-    else:
-        form = RecipeForm()
-    return render(request,'ready_recipe/add_recipe.html',{'form':form})
+            form = RecipeForm()
 
+        context_dict['form'] = form
 
+    except Recipe.DoesNotExist:
+        context_dict['form'] = None
+
+    return render(request,'ready_recipe/add_recipe.html',context=context_dict)
+
+# it can be used only from the admins to add new categories
 @login_required
 def add_category(request):
     form = CategoryForm()
+    # check whether the logged in user is admin
+    # and if yes, it add the new category without any recipes in it
     if request.user.is_superuser:
         if request.method =='POST':
             form = CategoryForm(request.POST)
@@ -217,13 +227,15 @@ def add_category(request):
             else:
                 print(form.errors)
     else:
+        # if user not an admin, redirect it to the home page
         return HttpResponseRedirect(reverse('ready_recipe:index'))
 
     return render(request,'ready_recipe/add_category.html',{'form':form})
 
 
 
-
+# helper function which returns a list of list
+# inner list has the object of the recipe, the category slug of the recipe and the recipe slug
 def get_recipe_info(recipes_qs):
     recipes_info = []
     for recipe in recipes_qs.all():
@@ -232,10 +244,13 @@ def get_recipe_info(recipes_qs):
         recipes_info.append([recipe,category_slug,recipe_slug])
     return recipes_info
 
+# profile of the user
+# it inludes the recipes uploaded by the current user and the saved recipes
 @login_required
 def user_profile(request):
     context_dict={}
     
+    # get the userProfile of the current user
     current_user, created = UserProfile.objects.get_or_create(user1 = request.user)
 
     # recipes added by the current user
@@ -249,6 +264,7 @@ def user_profile(request):
 
 
     return render(request,'ready_recipe/user_profile.html',context=context_dict)
+
 
 @login_required
 def change_password(request):
@@ -268,14 +284,16 @@ def change_password(request):
 
 @login_required
 def delete_user(request,username):
+    # get the current user and delte is from the database and then redirect to the index page
     current_user = User.objects.get(username = username)
     current_user.delete()
     return redirect(reverse('ready_recipe:index'))
 
-
+# function to add or remove a recipe from the saved recipes of the current user
 @login_required
 def add_or_delete_recipe(request,primaryKey):
 
+    # get the recipe the userProfile of the currentUser and the category of the current recipe
     recipe = Recipe.objects.get(id = primaryKey)
     current_user, created = UserProfile.objects.get_or_create(user1 = request.user)
     recCategory = Category.objects.get(id = recipe.category_id.id)    
@@ -288,11 +306,12 @@ def add_or_delete_recipe(request,primaryKey):
         # add the recipe to saved_Recipes
         current_user.saved_Recipes.add(recipe)
 
-    cat = slugify(recCategory.name)
-    rep = slugify(recipe.name)
-    return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(cat,rep,)))
+    return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(slugify(recCategory.name),slugify(recipe.name),)))
     
 
+# helper function used when sorting the search results
+# it returns a list of lists
+# inner list structure: [the-recipe-object, slug-of-the-category, slug-of-the-recipe, message-under-the-recipe, value-of-the-attribute-sorted ]
 def search_helper(sort_by,attri,rec_qs):
     results_info=[]
     messages = {1:'Price per portion: £',2:'Price per portion: £',3:'Difficulty: ',4:'Calories per portion: ',5:'Completion time: ',6:'Portion: '}
@@ -300,21 +319,27 @@ def search_helper(sort_by,attri,rec_qs):
         results_info.append([recipe,slugify(recipe.category_id.name),slugify(recipe.name),messages[sort_by],getattr(recipe,attri)])
     return results_info
 
-        
 
-
+# this function is called in two cases:
+#                       1-when searching: no paremeter
+#                       2-when sorting: both optional parameters are used
 def search(request,search=None,sorting=None):
     context_dict={}
     results=[]
+    # get all the recipes in tha database
     recipes = Recipe.objects.all()
 
+    # method is post only when searching, not when sorting
     if request.method == 'POST':
         search = request.POST.get("search")
+
+    # check for blank or empty string. if true, all the recipes of the database are listed
     if (not search.strip()) or search=="All the recipes" or (not search):
         results = recipes
         search="All the recipes"
 
     else:
+        # otherwise split the user input and make search with all the words of the input
         search_split = search.split()
         for recipe in recipes:
             for se in search_split:
@@ -322,11 +347,14 @@ def search(request,search=None,sorting=None):
                     results.append(recipe)
 
     results_info=[]
+
+    # if statemets are executed when sorting
+    # each if is different sorting
+    # the else statement at the end, is the default where not sorting is executed
     if sorting=='1':
         results = sorted(results, key=lambda rec: rec.average_overall_price) 
         results_info = search_helper(1,'average_overall_price',results)
         context_dict['message'] = 'Price(low to high)'
-
 
     elif sorting=='2':
         results = sorted(results, key=lambda rec: rec.average_overall_price,reverse=True )

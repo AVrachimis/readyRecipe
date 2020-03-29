@@ -7,21 +7,33 @@
 
 {% block body_block %}
 
-{% if registered %}
-    <strong>Thank you for creating an account!</strong>
+
+{% if request.user.is_authenticated %}
+
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1 class="jumbotron-heading">Already registered</h1>
+        </div>
+    </div>
 
 {% else %}
 
-    <strong>Register here!</strong><br />
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1 class="jumbotron-heading">Register here!</h1>
+        </div>
+    </div>
+   
     <form id="user_form" method="post" action="{% url 'ready_recipe:register' %}" enctype="multipart/form-data">
-       
+   
         {% csrf_token %}
 
         {{ user_form.as_p }}
         {{ profile_form.as_p }}
+        
         <input type="submit" name="submit" value="Register" />
     </form>
-{% endif %}
 
+{% endif %}
 
 {% endblock %} 
