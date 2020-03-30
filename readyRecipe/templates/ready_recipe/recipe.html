@@ -113,9 +113,51 @@
 
             {% endif %}
 
-        {% else %}
+            <div>
 
-        <strong>Recipe not available</strong>
+        
+
+                <form id="comment_form" method="post" action = ''>
+            
+                    {% csrf_token %}
+            
+                    {% for hidden in form.hidden_fields %}
+            
+                    {{ hidden }}
+            
+                    {% endfor %}
+            
+                    
+                    {% for field in form.visible_fields %}
+            
+                        {{ field.errors }}
+            
+                        {{ field.help_text }}
+                        
+                        <br>
+            
+            
+                        {{ field }} 
+            
+                        <br>
+            
+                    {% endfor %}
+                    
+                    <br>
+                    {% if request.user.is_authenticated %}
+                        <input type="submit" name="submit" value="Add Comment" />
+                    {% else%}
+                    <li><a href="{% url 'ready_recipe:login' %}">Login to make a comment</a></li>
+            
+                    {% endif %}
+            
+                </form>
+            </div>
+            
+
+        {% else %}
+        <br>
+        <h2>Recipe not available</h2>
 
 
         {% endif %}
@@ -123,45 +165,6 @@
 
     </div>
     
-    <div>
 
-        
-
-    <form id="comment_form" method="post" action = ''>
-
-        {% csrf_token %}
-
-        {% for hidden in form.hidden_fields %}
-
-        {{ hidden }}
-
-        {% endfor %}
-
-        
-        {% for field in form.visible_fields %}
-
-            {{ field.errors }}
-
-            {{ field.help_text }}
-            
-            <br>
-
-
-            {{ field }} 
-
-            <br>
-
-        {% endfor %}
-        
-        <br>
-        {% if request.user.is_authenticated %}
-            <input type="submit" name="submit" value="Add Comment" />
-        {% else%}
-        <li><a href="{% url 'ready_recipe:login' %}">Login to make a comment</a></li>
-
-        {% endif %}
-
-    </form>
-</div>
 
 {% endblock %}

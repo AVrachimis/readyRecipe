@@ -22,9 +22,6 @@ urlpatterns = [
     url(r'^delete/(?P<username>[\w|\W.-]+)/$', views.delete_user, name='delete_user'),
     url(r'^password/$', views.change_password, name='change_password'),
 
-
-
-
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     

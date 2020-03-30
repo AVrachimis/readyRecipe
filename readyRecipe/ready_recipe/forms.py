@@ -29,7 +29,7 @@ class RecipeForm(forms.ModelForm):
 
 class CommentForm(forms.ModelForm):
     date = forms.DateField(widget=forms.HiddenInput(),required=False,initial=datetime.date.today())
-    recommentations = forms.CharField(widget=forms.Textarea,help_text="Add your own Comment")
+    recommentations = forms.CharField(widget=forms.Textarea,help_text="Please enter your comment here")
 
     class Meta:
         model = Comment

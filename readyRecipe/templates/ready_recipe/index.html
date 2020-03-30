@@ -34,8 +34,7 @@
             {% for category in categories %}
             <li>
 
-                <a href="/ready_recipe/category/{{ category.slug }}/" style="color: black;">{{ category.name }}</a>
-                
+                <a href="{% url 'ready_recipe:show_category' category.slug %}">{{ category.name }}</a>
 
             </li>
 

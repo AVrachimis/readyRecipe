@@ -480,9 +480,9 @@ def populate():
                          new_comment = add_comment(comment['recommentations'],comment_user,new_recipe)
 
      # display all the recipes with their category
-     for category in Category.objects.all():
-          for recipe in Recipe.objects.filter(category_id = category):
-               print("-{}-{}".format(category.name,recipe.name))
+     #for category in Category.objects.all():
+     #     for recipe in Recipe.objects.filter(category_id = category):
+     #          print("-{}-{}".format(category.name,recipe.name))
 
 
      # add randomly recipes to the users as saved recipes

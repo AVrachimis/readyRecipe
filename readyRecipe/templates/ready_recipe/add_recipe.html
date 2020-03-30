@@ -3,8 +3,6 @@
 {% extends 'ready_recipe/base.html' %}
 
 
-
-
     {% block title_block %}
 
         Upload Your Recipe
@@ -12,12 +10,9 @@
     {% endblock %} 
 
 
-
     {% block body_block %}
 
 
-
-    
     {% if request.user.is_authenticated %}
 
         <form id="recipe_form" method="post" enctype= "multipart/form-data">

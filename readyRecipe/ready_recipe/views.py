@@ -16,14 +16,8 @@ from django.urls import reverse
 from django.template.defaultfilters import slugify
 
 
-
-
-
-
 def index(request):
     category_list = Category.objects.order_by('-name')
-    #recipe_list = Recipe.objects.order_by('-views')[:5]
-
 
     context_dict={}
     context_dict['categories'] = category_list
@@ -212,6 +206,7 @@ def add_recipe(request):
 
     return render(request,'ready_recipe/add_recipe.html',context=context_dict)
 
+
 # it can be used only from the admins to add new categories
 @login_required
 def add_category(request):
@@ -282,9 +277,10 @@ def change_password(request):
 
     return render(request, 'ready_recipe/change_password.html', {'form': form})    
 
+
 @login_required
 def delete_user(request,username):
-    # get the current user and delte is from the database and then redirect to the index page
+    # get the current user and delete is from the database and then redirect to the index page
     current_user = User.objects.get(username = username)
     current_user.delete()
     return redirect(reverse('ready_recipe:index'))
@@ -309,6 +305,7 @@ def add_or_delete_recipe(request,primaryKey):
     return HttpResponseRedirect(reverse('ready_recipe:show_recipe',args=(slugify(recCategory.name),slugify(recipe.name),)))
     
 
+
 # helper function used when sorting the search results
 # it returns a list of lists
 # inner list structure: [the-recipe-object, slug-of-the-category, slug-of-the-recipe, message-under-the-recipe, value-of-the-attribute-sorted ]
@@ -321,7 +318,7 @@ def search_helper(sort_by,attri,rec_qs):
 
 
 # this function is called in two cases:
-#                       1-when searching: no paremeter
+#                       1-when searching: no other paremeters except request
 #                       2-when sorting: both optional parameters are used
 def search(request,search=None,sorting=None):
     context_dict={}
@@ -332,7 +329,7 @@ def search(request,search=None,sorting=None):
     # method is post only when searching, not when sorting
     if request.method == 'POST':
         search = request.POST.get("search")
-
+    
     # check for blank or empty string. if true, all the recipes of the database are listed
     if (not search.strip()) or search=="All the recipes" or (not search):
         results = recipes
