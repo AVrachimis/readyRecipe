@@ -52,6 +52,8 @@
             <div class="column">
                 <h2 style="text-decoration: underline;" > My own Recipes</h2><br>
 
+                {% if own_rec_info %}
+
                         {% for rec in own_rec_info %}   
                     
                         <div>
@@ -67,11 +69,18 @@
                         </div>
 
                         {% endfor %}
+                {% else %}
+
+                        <h3>No recipe uploaded by you!</h3>
+
+                {% endif %}
             </div>
             
             <div class="column">
 
                 <h2 style="text-decoration: underline;"> My saved Recipes</h2><br>
+
+                {% if fav_rec_info %}
 
 
                     {% for rec in fav_rec_info %}
@@ -89,6 +98,11 @@
                     </div>
 
                     {% endfor %}
+                {% else %}
+                    
+                    <h3>You have no saved recipes.</h3>
+
+                {% endif %}
 
 
 

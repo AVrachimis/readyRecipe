@@ -325,6 +325,8 @@ def search(request,search=None,sorting=None):
     results=[]
     # get all the recipes in tha database
     recipes = Recipe.objects.all()
+    context_dict['all_recipes'] = recipes
+
 
     # method is post only when searching, not when sorting
     if request.method == 'POST':

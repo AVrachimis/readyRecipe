@@ -4,26 +4,33 @@ from ready_recipe.models import *
 from population_script import populate
 import os
 from django.urls import reverse
+from django.forms import fields as django_fields
+from ready_recipe.forms import *
+from django.contrib.auth.models import User
+from django.conf import settings
+
+
+
 
 
 
 # helper function to create a user object
-def create_user():
-    user = User.objects.get_or_create(username='testuser',email='test@email.com')
-    userProfile = UserProfile.objects.get_or_create(user1 = user,)[0]
-    user.set_password('test1234')
+def create_user(self):
+    user = User.objects.get_or_create(username='testuser',email='test@email.com',password = 'test1234')[0]
+    userProfile = UserProfile.objects.get_or_create(user1 = user)[0]
     userProfile.save()
     user.save()
+    self.client.login(username='testuser',password = 'test1234')
 
     return user
 
 # helper function to create an admin
-def create_superuser():
-    superuser = User.objects.create_superuser(username='theAdmin',email='theadmin@email.com')
+def create_superuser(self):
+    superuser = User.objects.create_superuser(username='theAdmin',email='theadmin@email.com',password = 'theadmin1234')
     superuserProfile=UserProfile.objects.get_or_create(user1=superuser)[0]
-    superuser.set_password('theadmin1234')
     superuserProfile.save()
     superuser.save()
+    self.client.login(username='theAdmin',password = 'theadmin1234')
 
     return superuser
 
@@ -34,37 +41,11 @@ class ready_recipe_tests(TestCase):
 
     def test_check_index_template(self):
 
-        response = self.client.get(reverse('ready_recipe:show_category',args=['easter-recipes']))
-
-        response1 = self.client.get(reverse('ready_recipe:index'))
-        response2 = self.client.get(reverse('ready_recipe:add_category'))
-        response3 = self.client.get(reverse('ready_recipe:add_recipe'))
-        response4 = self.client.get(reverse('ready_recipe:user_profile'))
-        response5 = self.client.get(reverse('ready_recipe:register'))
-        response6 = self.client.get(reverse('ready_recipe:login'))
-        response8 = self.client.get(reverse('ready_recipe:change_password'))
-        response9 = self.client.get(reverse('ready_recipe:change_password'))
-        response10 = self.client.get(reverse('ready_recipe:show_category',args=['pork']))
-        response10 = self.client.get(reverse('ready_recipe:show_recipe',args=['pork','pork-dumplings']))
-
-
-
-        self.assertTemplateUsed(response1, 'ready_recipe/index.html')
-        #self.assertTemplateUsed(response2, 'ready_recipe/add_category.html')
-        #self.assertTemplateUsed(response3, 'ready_recipe/add_recipe.html')
-        #self.assertTemplateUsed(response4, 'ready_recipe/user_profile.html')
-        #self.assertTemplateUsed(response5, 'ready_recipe/register.html')
-        #self.assertTemplateUsed(response6, 'ready_recipe/login.html')
-        #self.assertTemplateUsed(response8, 'ready_recipe/change_password.html')
-
-
-        self.assertTemplateUsed(response1, 'ready_recipe/base.html')
-        #self.assertTemplateUsed(response2, 'ready_recipe/base.html')
-        #self.assertTemplateUsed(response3, 'ready_recipe/base.html')
-        #self.assertTemplateUsed(response4, 'ready_recipe/base.html')
-        #self.assertTemplateUsed(response5, 'ready_recipe/base.html')
-        #self.assertTemplateUsed(response6, 'ready_recipe/base.html')
-        #self.assertTemplateUsed(response8, 'ready_recipe/base.html')
+        response = self.client.get(reverse('ready_recipe:index'))
+ 
+        self.assertTemplateUsed(response, 'ready_recipe/index.html')
+        self.assertTemplateUsed(response, 'ready_recipe/base.html')
+ 
 
     def test_pork_category_content(self):
 
@@ -83,6 +64,7 @@ class ready_recipe_tests(TestCase):
         self.assertIn("Easy vegetarian tacos".lower(),response.content.decode('ascii').lower())
         self.assertIn("Vegetarian Ravioli".lower(),response.content.decode('ascii').lower())
 
+
     def test_check_slug_functionality_category(self):
 
         category = Category.objects.get_or_create(name='Pork')[0]
@@ -90,12 +72,14 @@ class ready_recipe_tests(TestCase):
         category.save()
         self.assertEquals('pork-and-lamb',category.slug,'When the name of the category is changed, slug does not update')
 
-    def test_check_slug_functionality_category(self):
+
+    def test_check_slug_functionality_recipe(self):
         populate()
         recipe = Recipe.objects.get_or_create(name='Carrot soup')[0]
         recipe.name = 'CarROT SOUP with MEat'
         recipe.save()
         self.assertEquals('carrot-soup-with-meat',recipe.slug,'When the name of the recipe is changed, slug does not update')
+
 
     def test_empty_category(self):
 
@@ -118,6 +102,13 @@ class ready_recipe_tests(TestCase):
         self.assertIn("Recipe not available".lower(), response.content.decode('ascii').lower(),'Wrong message when the recipe does not exist')
 
 
+    def test_profile_message_without_recipes(self):
+        user = create_superuser(self)
+        response = self.client.get(reverse('ready_recipe:user_profile'))
+        self.assertIn("No recipe uploaded by you!".lower(),response.content.decode('ascii').lower())
+        self.assertIn("You have no saved recipes.".lower(),response.content.decode('ascii').lower())
+
+
     def does_gitignore_includes_database(self,path):
         f = open(path, 'r')
         
@@ -136,7 +127,7 @@ class ready_recipe_tests(TestCase):
         gitignore_path = os.path.join(git_base_dir, '.gitignore')
 
         if os.path.exists(gitignore_path):
-            self.assertTrue(self.does_gitignore_includes_database(gitignore_path))
+            self.assertTrue(self.does_gitignore_includes_database(gitignore_path),'Database is not included in the gitignore. Add it')
 
         
     def test_recipe_model(self):
@@ -158,4 +149,56 @@ class ready_recipe_tests(TestCase):
         self.assertEquals(c1.owner_id,owner,'Tests on the Comment model failed. Check your model and try again!')
 
 
+    def test_content_index(self):
+        populate()
+
+        response = self.client.get(reverse('ready_recipe:index'))
+        categories = Category.objects.all()
+
+        self.assertCountEqual(response.context['categories'], categories,'Index page does not display all the categories')
+
+
+    def test_add_category_not_in_plain_users(self):
+        user = create_user(self)
+        response = self.client.get(reverse('ready_recipe:index'))
+        self.assertTrue('Add Category'.lower() not in response.content.decode('ascii').lower(),"Add category button should not be displayed unless you are admin")
+
+
+    def test_add_category_only_at_userusers(self):
+        superuser = create_superuser(self)
+        response = self.client.get(reverse('ready_recipe:index'))
+        self.assertTrue('Add Category'.lower() in response.content.decode('ascii').lower(),"Add category button has to be displayed since the current user is an admin")
+
+
+    def test_message_when_search_has_no_results(self):
         
+        response = self.client.get(reverse('ready_recipe:search', args=['Cheese',None]))
+        self.assertIn('No results found for "Cheese"'.lower(),response.content.decode('ascii').lower(),'Wrong message when no results are found on search')
+    
+    
+    def test_empty_search_list(self):
+        populate()
+        response = self.client.get(reverse('ready_recipe:search', args=[' ',None]))
+        recipes = Recipe.objects.all()
+        self.assertCountEqual(response.context['all_recipes'], recipes,'Search does not include all the recipes when empty string is searched')
+
+
+    def test_add_category_form(self):
+        superuser = create_superuser(self)
+        response = self.client.get(reverse('ready_recipe:add_category'))
+        self.assertTrue("Add a Category".lower() in response.content.decode('ascii').lower(),"Add category form is not displayed correctly")
+
+
+    def test_base_template_exists(self):
+                
+        template_base_path = os.path.join(settings.TEMPLATE_DIR, 'ready_recipe', 'base.html')
+
+        self.assertTrue(os.path.exists(template_base_path),"base.html does not exist in the right directory")
+
+
+
+
+
+
+
+

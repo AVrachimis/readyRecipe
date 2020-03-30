@@ -57,7 +57,7 @@
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="{% url 'ready_recipe:user_profile' %}">Profile</a>
                             {% if user.is_superuser %}
-                                <a class="dropdown-item" href="{% url 'ready_recipe:add_category' %}">Add Category</a>
+                                <a class='dropdown-item' href="{% url 'ready_recipe:add_category' %}">Add Category</a>
                             {% endif %}
                             <a class="dropdown-item" href="{% url 'ready_recipe:change_password' %}">Change Password</a>
                             <a class="dropdown-item"  href="{% url 'ready_recipe:delete_user' username=request.user.username %}?next=/index/">Delete account</a>
