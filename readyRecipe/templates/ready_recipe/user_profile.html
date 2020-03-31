@@ -1,0 +1,143 @@
+
+{% extends 'ready_recipe/base.html' %}
+
+
+    {% block title_block %}
+
+        {{request.user.username}}
+
+    {% endblock %} 
+
+
+
+
+    {% block body_block %}
+
+    <style>
+        header {
+        background-color:transparent;
+        padding: 30px;
+        text-align: left;
+        font-size: 17px;
+        color: white;
+      }
+    
+      body {
+      font-family: Arial, Helvetica, sans-serif;
+        color: white;
+    }
+    div.jumbotron {
+      background: rgba(255, 255, 255, 0.27);
+    }
+    footer {
+        background-color:transparent;
+        padding: 30px;
+        text-align: left;
+        font-size: 17px;
+        color: white;
+      }
+    </style>
+
+
+    {% if user %}
+        <div class="jumbotron p-4">
+        <div class="container">
+
+            <h1 class="jumbotron-heading">{{request.user.username}}</h1>
+                
+        </div>
+    </div>
+
+    
+        <style> 
+            img {
+            max-width: 40%;
+            height: auto;
+          }
+          * {
+            box-sizing: border-box;
+            }
+
+            /* Create two equal columns that floats next to each other */
+            .column {
+                float: left;
+                width: 50%;
+                padding: 10px;
+            }
+
+            /* Clear floats after the columns */
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+        </style>
+        
+        <div class="row">
+            
+            <div class="column">
+                <h2 style="text-decoration: underline;" > My own Recipes</h2><br>
+
+                {% if own_rec_info %}
+
+                        {% for rec in own_rec_info %}   
+                    
+                        <div>
+                            <h3 class="list-group-item-heading">
+                                <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: slategrey;">{{rec.0.name}}</a>
+                            </h3>
+
+                            <p class="list-group-item-text">
+
+                                <img src="{{ rec.0.picture.url }}">
+                    
+                            </p>
+                        </div>
+
+                        {% endfor %}
+                {% else %}
+
+                        <h3>No recipe uploaded by you!</h3>
+
+                {% endif %}
+            </div>
+            
+            <div class="column">
+
+                <h2 style="text-decoration: underline;"> My saved Recipes</h2><br>
+
+                {% if fav_rec_info %}
+
+
+                    {% for rec in fav_rec_info %}
+                    <div>
+                        <h3 class="list-group-item-heading">
+
+                            <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: slategrey;">{{rec.0.name}}</a>
+                        </h3>
+
+                        <p class="list-group-item-text">
+
+                            <img src="{{ rec.0.picture.url }}">>
+                
+                        </p>
+                    </div>
+
+                    {% endfor %}
+                {% else %}
+                    
+                    <h3>You have no saved recipes.</h3>
+
+                {% endif %}
+
+
+
+            </div>
+
+
+
+        </div>
+        {% endif %}
+
+    {% endblock %} 
+

@@ -1,0 +1,83 @@
+{% extends 'ready_recipe/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Search Results
+{% endblock %}
+
+{% block body_block %}
+<style> 
+    img {
+    max-width: 15%;
+    height: auto;
+  }
+</style>
+
+{% if results %}
+
+<div class="jumbotron p-4">
+    <div class="container">
+        <h1 class="jumbotron-heading">Results for '{{search}}'</h1>
+    </div>
+</div>
+
+<div>
+
+    <h4>Found {{results|length}} recipes</h4>
+    <button class="nav-item dropdown ">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <strong>{{message}}</strong>
+        </a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'ready_recipe:search' search '1' %}">Price(low to high)</a>
+            <a class="dropdown-item" href="{% url 'ready_recipe:search' search '2' %}">Price(high to low)</a>
+            <a class="dropdown-item" href="{% url 'ready_recipe:search' search '3' %}">Difficulty(low to high)</a>
+            <a class="dropdown-item" href="{% url 'ready_recipe:search' search '4' %}">Calories(low to high)</a>
+            <a class="dropdown-item" href="{% url 'ready_recipe:search' search '5' %}">Time Needed(low to high)</a>
+            <a class="dropdown-item" href="{% url 'ready_recipe:search' search '6' %}">Portions(low to high)</a>
+        </div>
+    </button>
+    
+
+
+ <div class="list-group">
+ 
+
+    {% for result in results %}
+ 
+    <div class="list-group-item">
+ 
+
+        <h3 class="list-group-item-heading">
+
+            <a href="{% url 'ready_recipe:show_recipe' category_name_slug=result.1 recipe_name_slug=result.2 %}">{{ result.0.name|safe|escape }}</a>
+        </h3>
+
+        <p class="list-group-item-text">
+
+            <img src="{{result.0.picture.url }}"> <br> <br>
+
+            <strong>{{result.3}}{{result.4}}</strong>
+        </p>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+<div class="jumbotron p-4">
+    <div class="container">
+        <h1 class="jumbotron-heading">No results found for "{{search}}"</h1>
+    </div>
+</div>
+
+
+{% endif %}
+
+
+</div>
+
+
+{% endblock %}
+

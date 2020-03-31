@@ -1,0 +1,170 @@
+
+
+{% extends 'ready_recipe/base.html' %}
+ 
+ 
+    {% block title_block %}
+        {{recipes.name}} 
+    {% endblock %} 
+
+
+
+    {% block body_block %}
+
+    <div>
+        {% if recipes %}
+        <div class="jumbotron p-4">
+    
+			<div class="container">
+			
+				<h1 class="jumbotron-heading">{{recipes.name}}</h1>
+			
+            </div>
+        <style> 
+            img {
+            max-width: 60%;
+            height: auto;
+          }
+          * {
+            box-sizing: border-box;
+            }
+
+            /* Create two equal columns that floats next to each other */
+            .column {
+                float: left;
+                width: 12%;
+                padding: 10px;
+            }
+
+            /* Clear floats after the columns */
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+
+        </style>
+			
+        </div>
+
+        {% load static %}
+
+   
+        {% if recipes.picture%}
+            <img src="{{ recipes.picture.url }}"> <br>
+        {%endif%}
+
+
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'ready_recipe:add_or_delete_recipe' primaryKey=recipes.id %}">
+            <button type="button" class="btn btn-secondary">{{button}}</button>
+            </a>
+        {% endif %}
+
+        <div class="row">
+
+            <div class="column">
+                <h3>Portions</h3> 
+                <strong>{{recipes.portions}}</strong> <br>
+            </div>
+
+            <div class="column">
+                <h3>Difficulty</h3> 
+                <strong>{{recipes.difficulty}}</strong> <br>
+            </div>
+            <div class="column">
+                <h3>Time Needed</h3> 
+                <strong>{{recipes.get_completion_time_display}}</strong> <br>
+            </div>
+            <div class="column">
+                <h3>Calories Per Portion</h3> 
+                <strong>{{recipes.calories}}</strong> <br>    
+            </div>
+            <div class="column">
+                <h3>Average Price</h3> 
+                <strong>£{{recipes.average_overall_price}}</strong> <br>
+            </div>
+
+        </div>
+
+
+            <h3>Ingredients</h3> 
+            <strong>{{recipes.ingredients|linebreaks}}</strong> <br>
+        
+
+            <h3>Instructions</h3> 
+            <strong>{{recipes.instuction|linebreaks}}</strong> <br>
+
+       
+            {% if comments %}
+            <h3>Comments</h3> 
+
+                {% for comment in comments %}
+                <br>
+                <strong> {{comment.date}}, {{comment.owner_id}} </strong> <br>
+                <strong> {{comment.recommentations}} </strong>
+                <br>
+                
+                {% endfor %}
+                <br>
+            {% else %}
+                <h3>No Comments for this Recipe</h3>
+
+            {% endif %}
+
+            <div>
+
+        
+
+                <form id="comment_form" method="post" action = ''>
+            
+                    {% csrf_token %}
+            
+                    {% for hidden in form.hidden_fields %}
+            
+                    {{ hidden }}
+            
+                    {% endfor %}
+            
+                    
+                    {% for field in form.visible_fields %}
+            
+                        {{ field.errors }}
+            
+                        {{ field.help_text }}
+                        
+                        <br>
+            
+            
+                        {{ field }} 
+            
+                        <br>
+            
+                    {% endfor %}
+                    
+                    <br>
+                    {% if request.user.is_authenticated %}
+                        <input type="submit" name="submit" value="Add Comment" />
+                    {% else%}
+                    <li><a href="{% url 'ready_recipe:login' %}">Login to make a comment</a></li>
+            
+                    {% endif %}
+            
+                </form>
+            </div>
+            
+
+        {% else %}
+        <br>
+        <h2>Recipe not available</h2>
+
+
+        {% endif %}
+
+
+    </div>
+    
+
+
+{% endblock %}
