@@ -30,6 +30,7 @@ def create_superuser(self):
     superuserProfile=UserProfile.objects.get_or_create(user1=superuser)[0]
     superuserProfile.save()
     superuser.save()
+
     self.client.login(username='theAdmin',password = 'theadmin1234')
 
     return superuser
@@ -38,14 +39,6 @@ def create_superuser(self):
 
 class ready_recipe_tests(TestCase):
 
-
-    def test_check_index_template(self):
-
-        response = self.client.get(reverse('ready_recipe:index'))
- 
-        self.assertTemplateUsed(response, 'ready_recipe/index.html')
-        self.assertTemplateUsed(response, 'ready_recipe/base.html')
- 
 
     def test_pork_category_content(self):
 
@@ -198,7 +191,24 @@ class ready_recipe_tests(TestCase):
 
 
 
+    def test_template_usage(self):
+
+        response1 = self.client.get(reverse('ready_recipe:register'))
+        response2 = self.client.get(reverse('ready_recipe:login'))
+        response3 = self.client.get(reverse('ready_recipe:index'))
+        response4 = self.client.get(reverse('ready_recipe:show_category',args=['pork']))
+        response5 = self.client.get(reverse('ready_recipe:show_recipe',args=['pork','pork-dumplings']))
 
 
+        self.assertTemplateUsed(response1, 'ready_recipe/register.html')
+        self.assertTemplateUsed(response2, 'ready_recipe/login.html')
+        self.assertTemplateUsed(response3, 'ready_recipe/index.html')
+        self.assertTemplateUsed(response4, 'ready_recipe/category.html')
+        self.assertTemplateUsed(response5, 'ready_recipe/recipe.html')
 
+        self.assertTemplateUsed(response1, 'ready_recipe/base.html')
+        self.assertTemplateUsed(response2, 'ready_recipe/base.html')
+        self.assertTemplateUsed(response3, 'ready_recipe/base.html')
+        self.assertTemplateUsed(response4, 'ready_recipe/base.html')
+        self.assertTemplateUsed(response5, 'ready_recipe/base.html')
 
