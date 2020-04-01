@@ -32,15 +32,30 @@
 
     {% endif %}
 
-
     <style>
-.panel {
-  padding: 0 18px;
-  background-color: white;
-  display: none;
-  overflow: hidden;
-}
-
+      .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 7px;
+        width: 100%;
+        border: 1px;
+        text-align:center;
+        outline:auto;
+        font-size: 17px;
+      }
+      .active, .accordion:hover {
+        background-color:cornsilk; 
+      }
+      
+      
+      .panel {
+        padding: 0 18px;
+        background-color: white;
+        display: none;
+        overflow: hidden;
+      
+      }
     </style>
     
 <script>
