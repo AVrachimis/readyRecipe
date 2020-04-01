@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ready_recipe',
     'registration',
+    'background_image',
+
 ]
 
 MIDDLEWARE = [

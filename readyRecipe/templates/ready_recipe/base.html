@@ -2,24 +2,25 @@
 
 {% load staticfiles %}
 {% load template_tags %}
+{% load background_image_tags %}
 
 <style>
-    header {
-    background-color:transparent;
-    padding: 30px;
-    text-align: left;
-    font-size: 17px;
-    color: white;
-  }
+        header {
+        background-color:transparent;
+        padding: 30px;
+        text-align: left;
+        font-size: 17px;
+        color: white;
+      }
 
-footer {
-    background-color:transparent;
-    padding: 30px;
-    text-align: left;
-    font-size: 17px;
-    color: white;
-  }
-</style>
+    footer {
+        background-color:transparent;
+        padding: 30px;
+        text-align: left;
+        font-size: 17px;
+        color: white;
+      }
+    </style>
 
 <html lang="en">
     <head>
@@ -98,6 +99,9 @@ footer {
             </div>
         </nav>
     </header>
+
+    <body style="background: url('{% background_image_url %}') no-repeat fixed; background-size: cover;"> 
+
 
     <div class="container-fluid">
         <div class="row">
