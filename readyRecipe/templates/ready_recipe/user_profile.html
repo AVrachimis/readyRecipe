@@ -24,6 +24,30 @@
 
     
         <style> 
+            header {
+            background-color:transparent;
+            padding: 30px;
+            text-align: left;
+            font-size: 17px;
+            color: white;
+            }
+
+            body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            }
+
+            div.jumbotron {
+            background: rgba(255, 255, 255, 0.27);
+            }
+            footer {
+            background-color:transparent;
+            padding: 30px;
+            text-align: left;
+            font-size: 17px;
+            color: white;
+            }
+
             img {
             max-width: 40%;
             height: auto;
@@ -58,7 +82,7 @@
                     
                         <div>
                             <h3 class="list-group-item-heading">
-                                <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: slategrey;">{{rec.0.name}}</a>
+                                <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: whitesmoke;">{{rec.0.name}}</a>
                             </h3>
 
                             <p class="list-group-item-text">
@@ -87,7 +111,7 @@
                     <div>
                         <h3 class="list-group-item-heading">
 
-                            <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: slategrey;">{{rec.0.name}}</a>
+                            <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: whitesmoke;">{{rec.0.name}}</a>
                         </h3>
 
                         <p class="list-group-item-text">
