@@ -8,21 +8,34 @@
 
 {% block body_block %}
 
-<h3>Login</h3>
+<style>
+    header {
+        background-color:transparent;
+        padding: 30px;
+        text-align: left;
+        font-size: 15px;
+        color: white;
+      }
+    
+</style>
+    
 
-<form id="login_form" method="post" action="{% url 'ready_recipe:login' %}">
- {% csrf_token %}
-    Username: <input type="text" name="username" value="" size="50" />
-    <br />
-    Password: <input type="password" name="password" value="" size="50" />
-    <br />
-    {% if not success %}
-        <strong>Invalid Login details. Please try again</strong><br>
-    {% endif %}
-    <input type="submit" value="Login" />
+<h3>Login</h3>
+<div class="container">
+        
+    <form class="form-signin" role="form" method="post" action=".">
+    {% csrf_token %}
+    <label for="inputUsername" class="sr-only">Username</label>
+    <input type="text" name="username" id="id_username" class="form-control"
+    placeholder="Username" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" name="password" id="id_password" class="form-control"
+    placeholder="Password" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit"
+    value="Submit">Log In</button>
     </form>
-   
-   
+    </div>
+
 {% endblock %}
 
 
