@@ -4,8 +4,15 @@
 - Andreas Vrachimis, George Flouris, Kai Hu
 ## Instructions to run locally:
 - Download the repository
-- pip install -r requirements.txt
-- python manage.py makemigrations
-- python manage.py migrate
-- python population_script.py
-- python manage.py runserver
+- Create and activate the virtual enviroment 
+> conda create -n rango python=3.7.2 <br>
+> conda activate rango
+- Install all the packages required in the requirements.txt
+> pip install -r requirements.txt
+- Apply migrations
+> python manage.py makemigrations <br>
+> python manage.py migrate
+- Create objects
+>python population_script.py
+- Run the server
+>python manage.py runserver
