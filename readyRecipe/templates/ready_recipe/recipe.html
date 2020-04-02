@@ -32,17 +32,21 @@
             h3{
                 color: whitesmoke;
             }
+            h2{
+                color: whitesmoke;
+            }
             strong{
                 color: whitesmoke;
                 width: 50%;
                 padding:5px;
                 display:block;
-            }​
-            
+                }​
+
 
             img {
             max-width: 60%;
-            height: auto;
+            width:50%;
+            height: 300px;
           }
           * {
             box-sizing: border-box;
@@ -85,7 +89,7 @@
 
    
         {% if recipes.picture%}
-            <img src="{{ recipes.picture.url }}"> <br>
+            <img src="{{ recipes.picture.url }}" style="max-height: 500px; max-width: 800px;"> <br>
         {%endif%}
 
 
@@ -116,7 +120,7 @@
             </div>
             <div class="column">
                 <h3>Average Price</h3> 
-                <h4><strong>£{{recipes.average_overall_price}}</strong></h4> <br>
+                <h4><strong>£{{recipes.average_overall_price}}</strong></h4> 
             </div>
 
         </div>
@@ -198,7 +202,7 @@
                     {% if request.user.is_authenticated %}
                         <input class="btn btn-primary"type="submit" name="submit" value="Add Comment" />
                     {% else%}
-                    <li><a href="{% url 'ready_recipe:login' %}">Login to make a comment</a></li>
+                    <li><a href="{% url 'ready_recipe:login' %}" style="color: whitesmoke; font-size:x-large;" >Login to make a comment</a></li>
             
                     {% endif %}
             
@@ -208,7 +212,7 @@
 
         {% else %}
         <br>
-        <h2>Recipe not available</h2>
+        <h2 style="color: whitesmoke;">Recipe not available</h2>
 
 
         {% endif %}
