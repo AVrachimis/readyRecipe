@@ -41,7 +41,7 @@ SECRET_KEY = '%6-!zro^aw6lvv!pu@mgusvn98t@x8%f@ffjq@snbstkbh*y(c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['AndreasVrachimis.pythonanywhere.com']
 
 # If True, users can register.
 REGISTRATION_OPEN = True
