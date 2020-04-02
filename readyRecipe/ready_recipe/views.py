@@ -378,7 +378,12 @@ def search_helper(sort_by,attri,rec_qs):
     results_info=[]
     messages = {1:'Price per portion: £',2:'Price per portion: £',3:'Difficulty: ',4:'Calories per portion: ',5:'Completion time: ',6:'Portion: '}
     for recipe in rec_qs:
-        results_info.append([recipe,slugify(recipe.category_id.name),slugify(recipe.name),messages[sort_by],getattr(recipe,attri)])
+        if sort_by !=5:
+            results_info.append([recipe,slugify(recipe.category_id.name),slugify(recipe.name),messages[sort_by],getattr(recipe,attri)])
+        else:
+            results_info.append([recipe,slugify(recipe.category_id.name),slugify(recipe.name),messages[sort_by],recipe.get_completion_time_display()])
+
+
     return results_info
 
 
