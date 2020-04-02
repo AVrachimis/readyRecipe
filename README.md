@@ -4,6 +4,7 @@
 - Andreas Vrachimis, George Flouris, Kai Hu
 ## Instructions to run locally:
 - Download the repository
+- Download and install pip. Version 19.3.1 was used for this web application.
 - Create and activate the virtual enviroment 
 > conda create -n rango python=3.7.2 <br>
 > conda activate rango
