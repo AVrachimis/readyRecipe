@@ -23,6 +23,7 @@
         <style> 
         body{
             color: whitesmoke;
+            margin: auto;
         }
             div.jumbotron {
                 background: rgba(255, 255, 255, 0.27);
@@ -55,6 +56,15 @@
                 display: table;
                 clear: both;
             }
+            hr{
+                border-color: whitesmoke;
+                margin: 0px;
+                width: 170px;
+
+            }
+            .list-group-item{
+                width: 300px;
+            }
             
 
 
@@ -72,7 +82,7 @@
 
         {% if request.user.is_authenticated %}
             <a href="{% url 'ready_recipe:add_or_delete_recipe' primaryKey=recipes.id %}">
-            <button type="button" class="btn btn-secondary">{{button}}</button>
+            <button type="button" class="btn btn-primary">{{button}}</button>
             </a>
         {% endif %}
 
@@ -104,16 +114,20 @@
 
 
             <h3>Ingredients</h3> 
+            <hr> 
+
             <strong>{{recipes.ingredients|linebreaks}}</strong> <br>
         
 
             <h3>Instructions</h3> 
+            <hr>
+
             <strong>{{recipes.instuction|linebreaks}}</strong> <br>
 
        <div>
             {% if comments %}
             <h3>Comments</h3> 
-            <hr style="border-color: whitesmoke;">
+            <hr>
 
                 {% for comment in comments %}
                 <br>
@@ -173,7 +187,7 @@
                     
                     <br>
                     {% if request.user.is_authenticated %}
-                        <input type="submit" name="submit" value="Add Comment" />
+                        <input class="btn btn-primary"type="submit" name="submit" value="Add Comment" />
                     {% else%}
                     <li><a href="{% url 'ready_recipe:login' %}">Login to make a comment</a></li>
             
