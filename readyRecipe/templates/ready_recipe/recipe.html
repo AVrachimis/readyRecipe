@@ -55,6 +55,7 @@
                 display: table;
                 clear: both;
             }
+            
 
 
         </style>
@@ -109,15 +110,26 @@
             <h3>Instructions</h3> 
             <strong>{{recipes.instuction|linebreaks}}</strong> <br>
 
-       
+       <div>
             {% if comments %}
             <h3>Comments</h3> 
+            <hr style="border-color: whitesmoke;">
 
                 {% for comment in comments %}
                 <br>
-                <strong> {{comment.date}}, {{comment.owner_id}} </strong> <br>
-                <strong> {{comment.recommentations}} </strong>
+                <div class="list-group-item" style="background-color:rgba(255, 255, 255, 0.27);" >
+                    <h3 class="list-group-item-heading">
+                            <div style="display:inline-block;">
+                                <h4 style="display: inline-block;">{{comment.owner_id}},</h4>
+                                <h6 style="display: inline-block;">{{comment.date}}</h6>
+                            </div>
+                    </h3>
+                <p class="list-group-item-text">
+                    <strong> {{comment.recommentations}} </strong>
                 <br>
+                </p>
+            </div>
+
                 
                 {% endfor %}
                 <br>
@@ -125,6 +137,9 @@
                 <h3>No Comments for this Recipe</h3>
 
             {% endif %}
+
+        </div>
+
 
             <div>
 
