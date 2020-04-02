@@ -18,35 +18,75 @@
         background-attachment: fixed;  
         background-size: cover;
       }
+      h2{
+          color: whitesmoke;
+      }
+      h1{
+        text-align: center;
+          color: whitesmoke;
+      }
+      h3{
+          color: whitesmoke;
+      }
+      a{
+          color: whitesmoke;
+      }
+    img {
+            max-width: 75%;
+            height: auto;
+          }
+          .row {
+  display: flex;
+}
+.column {
+  flex: 22%;
+  padding: 5px;
+}
       </Style>
 
-<div class="jumbotron p-4">
     
-    <div class="container">
+    <div class="container"style="width: 300px; height: 15%;">
     
-        <h1 class="jumbotron-heading">Welcome to the world of Recipes!!</h1>
+        <h1 class="jumbotron-heading"style="font-style: italic; color: whitesmoke; text-align: center; position: absolute;">ReadyRecipe</h1>
 
     
     </div>
 
+    <div class="jumbotron p-4">
+        <div class="container">
+
+            <h2 style="text-align: center;"><a href="{% url 'ready_recipe:register' %}" style="text-align: center; display:inline-block;">Sign up</a>
+            
+              |  
+
+            <a href="{% url 'ready_recipe:login' %}" style="text-align: center; display: inline-block;">Login</a></h2>
+                
+        </div>
+    </div>
+
+    <h2 style="text-align: center;text-decoration: underline; ">Recipes of the day</h2>
+
+    <br>
+
+    <div class="row">
+
+        {% for rec in recipes  %}
+
+        <div class="column">
+            <h3 class="list-group-item-heading">
+                <a href="{% url 'ready_recipe:show_recipe' category_name_slug=rec.1 recipe_name_slug=rec.2 %}" style="color: whitesmoke;">{{rec.0.name}}</a>
+            </h3>
+
+            <p class="list-group-item-text">
+
+                <img src="{{ rec.0.picture.url }}">
     
-    <h2 class="h2">
-  
-    </h2>
+            </p>
+        </div>
 
-        <ul>
-            {% for category in categories %}
-            <li>
-
-                <a href="{% url 'ready_recipe:show_category' category.slug %}">{{ category.name }}</a>
-
-            </li>
-
-            {% endfor %}
-
-        </ul>
-
+        {% endfor %}
 
 
     </div>
+
     {% endblock %}

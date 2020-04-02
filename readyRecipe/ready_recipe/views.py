@@ -15,6 +15,7 @@ from django.urls import reverse
 
 from django.template.defaultfilters import slugify
 from datetime import datetime
+import random
 
 
 # A helper method
@@ -48,15 +49,52 @@ def visitor_cookie_handler(request):
     request.session['visits'] = visits
 
 
+
+
+# helper function which returns a list of list
+# inner list has the object of the recipe, the category slug of the recipe and the recipe slug
+# argument is a queryest
+def get_recipe_info(recipes_qs):
+    recipes_info = []
+    for recipe in recipes_qs.all():
+        category_slug = slugify(recipe.category_id.name)
+        recipe_slug = slugify(recipe.name)
+        recipes_info.append([recipe,category_slug,recipe_slug])
+    return recipes_info
+
+
+# helper function which returns a list of list
+# inner list has the object of the recipe, the category slug of the recipe and the recipe slug
+# argument is a list
+def get_recipe_info_list(recipeslist):
+    recipes_info = []
+    for recipe in recipeslist:
+        category_slug = slugify(recipe.category_id.name)
+        recipe_slug = slugify(recipe.name)
+        recipes_info.append([recipe,category_slug,recipe_slug])
+    return recipes_info
+
+
+
+
 def index(request):
-    category_list = Category.objects.order_by('-name')
-
     context_dict={}
-    context_dict['categories'] = category_list
+    recipes = Recipe.objects.all()
 
-    visitor_cookie_handler(request)
+    recipes_of_the_day = []
+    for i in range(4):
+        rec = random.choice(recipes)
+
+        # avoid duplicates
+        if rec not in recipes_of_the_day: recipes_of_the_day.append(rec)
+
+    recipes_infos = get_recipe_info_list(recipes_of_the_day)
+
+    context_dict['recipes'] = recipes_infos
+
     # Obtain our Response object early so we can add cookie information.
     response = render(request, 'ready_recipe/index.html', context=context_dict)
+    visitor_cookie_handler(request)
 
     # Return response back to the user, updating any cookies that need changed.
     return response
@@ -265,16 +303,6 @@ def add_category(request):
     return render(request,'ready_recipe/add_category.html',{'form':form})
 
 
-
-# helper function which returns a list of list
-# inner list has the object of the recipe, the category slug of the recipe and the recipe slug
-def get_recipe_info(recipes_qs):
-    recipes_info = []
-    for recipe in recipes_qs.all():
-        category_slug = slugify(recipe.category_id.name)
-        recipe_slug = slugify(recipe.name)
-        recipes_info.append([recipe,category_slug,recipe_slug])
-    return recipes_info
 
 # profile of the user
 # it inludes the recipes uploaded by the current user and the saved recipes

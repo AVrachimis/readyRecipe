@@ -15,7 +15,7 @@
                     {% for recipe in recipes %}
                         {% ifequal recipe.category_id.id  c.id %}
 
-                            <ol><a href="{% url 'ready_recipe:show_recipe' c.slug recipe.slug %}">{{ recipe.name }}</a></ol>
+                            <h5><a href="{% url 'ready_recipe:show_recipe' c.slug recipe.slug %}" style="color: black;">{{ recipe.name }}</a></h5>
 
                         {% endifequal %}
                     {% endfor %}
