@@ -8,7 +8,7 @@
 {% block body_block %}
 <style> 
     img {
-    max-width: 15%;
+    width: 260px;
     height: auto;
   }
   div.jumbotron {
@@ -17,6 +17,11 @@
         h4{
             color: whitesmoke;
         }
+        hr{
+                border-color: whitesmoke;
+                margin: 0px;
+                width: 100%
+            }
 </style>
 
 {% if results %}
@@ -43,6 +48,11 @@
             <a class="dropdown-item" href="{% url 'ready_recipe:search' search '6' %}">Portions(low to high)</a>
         </div>
     </button>
+    <br>
+
+    <br>
+    <hr>
+
     
 
 
@@ -63,6 +73,7 @@
             <img src="{{result.0.picture.url }}"> <br> <br>
 
             <strong style="color: whitesmoke;">{{result.3}}{{result.4}}</strong>
+            <hr style="width: 260px;">
         </p>
 
     {% endfor %}

@@ -24,6 +24,7 @@
         body{
             color: whitesmoke;
             margin: auto;
+            font-size: large;
         }
             div.jumbotron {
                 background: rgba(255, 255, 255, 0.27);
@@ -33,7 +34,11 @@
             }
             strong{
                 color: whitesmoke;
-            }
+                width: 50%;
+                padding:5px;
+                display:block;
+            }​
+            
 
             img {
             max-width: 60%;
@@ -64,6 +69,10 @@
             }
             .list-group-item{
                 width: 300px;
+            }
+            textarea {
+            width: 300px;
+            height: 150px;
             }
             
 
@@ -134,7 +143,7 @@
                 <div class="list-group-item" style="background-color:rgba(255, 255, 255, 0.27);" >
                     <h3 class="list-group-item-heading">
                             <div style="display:inline-block;">
-                                <h4 style="display: inline-block;">{{comment.owner_id}},</h4>
+                                <h4 style="display: inline-block; text-decoration: underline;">{{comment.owner_id}},</h4>
                                 <h6 style="display: inline-block;">{{comment.date}}</h6>
                             </div>
                     </h3>
