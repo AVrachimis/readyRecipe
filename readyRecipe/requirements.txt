@@ -4,7 +4,7 @@ cffi==1.11.5
 chardet==3.0.4
 defusedxml==0.5.0
 Django==2.1.5
-django-background-image
+django-background-image==0.0.1
 django-braces==1.14.0
 django-cors-headers==2.4.0
 django-model-utils==4.0.0
@@ -23,7 +23,7 @@ pytz==2019.3
 requests==2.23.0
 requests-oauthlib==1.2.0
 selenium==3.141.0
-setuptools==44.0.0.post20200106
+setuptools==44.0.0
 six==1.14.0
 sqlparse==0.3.0
 swapper==1.1.2.post1

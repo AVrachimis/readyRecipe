@@ -16,6 +16,26 @@ from django.urls import reverse
 from django.template.defaultfilters import slugify
 from datetime import datetime
 
+def get_server_side_cookie(request, cookie, default_val=0):
+    val = request.session.get(cookie)
+    if not val:
+        val = default_val
+    return val
+
+
+def visitor_cookie_handler(request):
+    visits = int(get_server_side_cookie(request, 'visits', '1'))
+    last_visit_cookie = get_server_side_cookie(request, 'last_visit', str(datetime.now()))
+    last_visit_time = datetime.strptime(last_visit_cookie[:-7], "%Y-%m-%d %H:%M:%S")
+
+    if (datetime.now() - last_visit_time).seconds > 0:
+        visits += 1
+        request.session['last_visit'] = str(datetime.now())
+    else:
+        visits = 1
+        request.session['last_visit'] = last_visit_cookie
+    request.session['visits'] = visits
+
 
 def index(request):
     category_list = Category.objects.order_by('-name')
@@ -25,7 +45,6 @@ def index(request):
 
     visitor_cookie_handler(request)
     context_dict['visits'] = request.session['visits']
-
     response = render(request, 'ready_recipe/index.html', context=context_dict)
     return response
 
